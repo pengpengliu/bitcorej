@@ -1,0 +1,4 @@
+rootProject.name = 'bitcorej'
+include 'core'
+include 'examples'
+
