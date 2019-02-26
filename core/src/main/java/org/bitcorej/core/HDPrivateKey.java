@@ -5,10 +5,7 @@ import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDKeyDerivation;
 import org.bitcoinj.params.MainNetParams;
 
-import java.math.BigInteger;
-
 public class HDPrivateKey {
-
     private DeterministicKey key;
 
     public HDPrivateKey(String serialized) {
@@ -20,12 +17,16 @@ public class HDPrivateKey {
         return new HDPrivateKey(derived.serializePrivB58(MainNetParams.get()));
     }
 
-    public BigInteger getPrivKey() {
-        return this.key.getPrivKey();
+    public PrivateKey getPrivKey() {
+        return new PrivateKey(this.key.getPrivKeyBytes());
+    }
+
+    public PublicKey getPubKey() {
+        return new PublicKey(this.key.getPubKey());
     }
 
     @Override
     public String toString() {
-        return key.serializePubB58(MainNetParams.get());
+        return key.serializePrivB58(MainNetParams.get());
     }
 }
