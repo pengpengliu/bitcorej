@@ -17,6 +17,10 @@ public class PublicKey {
         return key.toAddress(MainNetParams.get()).toString();
     }
 
+    public BigInteger toBigInteger() {
+        return new BigInteger(this.raw);
+    }
+
     @Override
     public String toString() {
         return new BigInteger(raw).toString(16);

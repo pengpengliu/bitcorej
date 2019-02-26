@@ -18,5 +18,4 @@ public class SampleEthereumWallet {
         ChainState eth = new ChainStateProxy("eth");
         System.out.println(eth.getAddress(privKey));
     }
-
 }

@@ -15,6 +15,10 @@ public class PrivateKey {
         return new PublicKey(ECKey.publicKeyFromPrivate(new BigInteger(raw), true));
     }
 
+    public BigInteger toBigInteger() {
+        return new BigInteger(this.raw);
+    }
+
     @Override
     public String toString() {
         return new BigInteger(raw).toString(16);

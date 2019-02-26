@@ -5,6 +5,7 @@ import org.bitcorej.chain.ChainStateProxy;
 import org.bitcorej.core.HDPrivateKey;
 import org.bitcorej.core.HDWallet;
 import org.bitcorej.core.PrivateKey;
+import org.bitcorej.core.PublicKey;
 
 public class SampleBitconWallet {
     public static void main(String[] args) throws Exception {
@@ -16,13 +17,14 @@ public class SampleBitconWallet {
         System.out.println("Account Extended Private Key is: " + xprv);
 
         PrivateKey privKey = xprv.derived(0).derived(0).getPrivKey();
+        PublicKey pubKey = privKey.toPublicKey();
         // KyqYNjoGNVdS5osHUiApLB4dwBxRTZs97WQch21jTpCyNDzisqWJ
         System.out.println("Private key is: " + privKey);
         // 024eda7ec4a20a5c24902063b85d60a53d52c4fcc8362594b5f258a4cc5458bc4f
-        System.out.println("Public key is: " + privKey.toPublicKey());
+        System.out.println("Public key is: " + pubKey);
 
         ChainState btc = new ChainStateProxy("btc");
         // 1DJwaDEZTYkW2eASD4wX3vv46QHs4LcAbf
-        System.out.println("Address is: " + btc.getAddress(privKey));
+        System.out.println("Address is: " + btc.getAddress(pubKey));
     }
 }

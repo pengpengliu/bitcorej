@@ -3,6 +3,7 @@ package org.bitcorej.chain;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.core.PrivateKey;
+import org.bitcorej.core.PublicKey;
 
 import java.util.HashMap;
 
@@ -29,5 +30,10 @@ public class ChainStateProxy implements ChainState {
     @Override
     public String getAddress(PrivateKey privKey) {
         return provider.getAddress(privKey);
+    }
+
+    @Override
+    public String getAddress(PublicKey pubKey) {
+        return provider.getAddress(pubKey);
     }
 }
