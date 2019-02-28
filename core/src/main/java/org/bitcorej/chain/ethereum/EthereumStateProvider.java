@@ -7,6 +7,8 @@ import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
 import org.web3j.utils.Numeric;
 
+import java.util.ArrayList;
+
 public class EthereumStateProvider implements ChainState {
     @Override
     public String getAddress(PrivateKey privKey) {
@@ -16,5 +18,10 @@ public class EthereumStateProvider implements ChainState {
     @Override
     public String getAddress(PublicKey pubKey) {
         return Numeric.prependHexPrefix(Keys.getAddress(pubKey.toBigInteger()));
+    }
+
+    @Override
+    public byte[] signRawTransaction(byte[] rawTx, ArrayList<byte[]> keys) {
+        return new byte[0];
     }
 }

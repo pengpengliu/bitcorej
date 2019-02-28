@@ -2,9 +2,11 @@ package org.bitcorej.chain;
 
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.core.Network;
 import org.bitcorej.core.PrivateKey;
 import org.bitcorej.core.PublicKey;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ChainStateProxy implements ChainState {
@@ -13,17 +15,19 @@ public class ChainStateProxy implements ChainState {
     static
     {
         services = new HashMap<>();
-        services.put("BTC", new BitcoinStateProvider());
-        services.put("ETH", new EthereumStateProvider());
+        services.put("BTC_MAIN", new BitcoinStateProvider(Network.MAIN));
+        services.put("BTC_TEST", new BitcoinStateProvider(Network.TEST));
+        services.put("BTC_REGTEST", new BitcoinStateProvider(Network.REGTEST));
+        services.put("ETH_MAIN", new EthereumStateProvider());
+        services.put("ETH_TEST", new EthereumStateProvider());
     }
 
     private ChainState provider;
 
-    public ChainStateProxy(String chain) throws Exception {
-        chain = chain.toUpperCase();
-        this.provider = services.get(chain);
-        if (provider == null) {
-            throw new Exception("Chain " + chain + " doesn't have a ChainState registered");
+    public ChainStateProxy(String chain, String network) throws Exception {
+        this.provider = services.get(chain.toUpperCase() + "_" + network.toUpperCase());
+        if (this.provider == null) {
+            throw new Exception("Chain " + chain + " or Network " + network + " doesn't have a ChainState registered");
         }
     }
 
@@ -35,5 +39,10 @@ public class ChainStateProxy implements ChainState {
     @Override
     public String getAddress(PublicKey pubKey) {
         return provider.getAddress(pubKey);
+    }
+
+    @Override
+    public byte[] signRawTransaction(byte[] rawTx, ArrayList<byte[]> keys) {
+        return provider.signRawTransaction(rawTx, keys);
     }
 }

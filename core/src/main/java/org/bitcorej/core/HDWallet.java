@@ -36,10 +36,10 @@ public class HDWallet {
         this.keychain = DeterministicKeyChain.builder().seed(seed).build();
     }
 
-    public HDPrivateKey derivedKey(String path) {
+    public HDPrivateKey derivedKey(String path, Network network) {
         path = path.replace("m", "M").replace("'", "H");
         List<ChildNumber> keyPath = HDUtils.parsePath(path);
         DeterministicKey key = keychain.getKeyByPath(keyPath, true);
-        return new HDPrivateKey(key.serializePrivB58(MainNetParams.get()));
+        return new HDPrivateKey(key.serializePrivB58(network.getNetworkParameters()), network);
     }
 }
