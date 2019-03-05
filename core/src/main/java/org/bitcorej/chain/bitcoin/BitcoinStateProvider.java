@@ -1,10 +1,12 @@
 package org.bitcorej.chain.bitcoin;
 
 import org.bitcoinj.core.*;
+import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.RegTestParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
+import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.core.Network;
 import org.bitcorej.core.PrivateKey;
@@ -44,8 +46,33 @@ public class BitcoinStateProvider implements ChainState {
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, ArrayList<byte[]> keys) {
-        return new byte[0];
+    public byte[] signRawTransaction(byte[] rawTx, ArrayList<PrivateKey> keys) {
+        Transaction tx = new Transaction(params, rawTx);
+
+        for (int i = 0; i < tx.getInputs().size(); i++) {
+            TransactionInput input = tx.getInput(i);
+            PrivateKey key = keys.get(i);
+
+            ECKey ecKey = ECKey.fromPrivate(key.getRaw());
+
+//            Script scriptPubKey = ScriptBuilder.createOutputScript(ecKey);
+
+            Script scriptPubKey = ScriptBuilder.createOutputScript(ecKey.toAddress(network.getNetworkParameters()));
+
+            Sha256Hash hash = tx.hashForSignature(i, scriptPubKey, Transaction.SigHash.ALL, false);
+            ECKey.ECDSASignature ecSig = ecKey.sign(hash);
+            TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.ALL, false);
+            if (scriptPubKey.isSentToRawPubKey()) {
+                input.setScriptSig(ScriptBuilder.createInputScript(txSig, ecKey));
+            } else {
+                if (!scriptPubKey.isSentToAddress()) {
+                    return new byte[0];
+                }
+                input.setScriptSig(ScriptBuilder.createInputScript(txSig, ecKey));
+            }
+        }
+        
+        return tx.bitcoinSerialize();
     }
 
     public class Recipient {

@@ -21,7 +21,7 @@ public class EthereumStateProvider implements ChainState {
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, ArrayList<byte[]> keys) {
+    public byte[] signRawTransaction(byte[] rawTx, ArrayList<PrivateKey> keys) {
         return new byte[0];
     }
 }

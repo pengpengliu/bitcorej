@@ -2,7 +2,7 @@ package org.bitcorej.examples;
 
 import org.bitcorej.core.*;
 
-public class SampleHDWallet {
+public class ExampleHDWallet {
     public static void main(String[] args) throws Exception {
         HDWallet wallet = new HDWallet();
 

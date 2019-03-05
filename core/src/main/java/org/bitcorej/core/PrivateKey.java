@@ -19,7 +19,11 @@ public class PrivateKey {
     }
 
     public PublicKey toPublicKey() {
-        return new PublicKey(ECKey.publicKeyFromPrivate(new BigInteger(raw), true), network);
+        return new PublicKey(ECKey.fromPrivate(raw).getPublicKeyAsHex(), network);
+    }
+
+    public byte[] getRaw() {
+        return raw;
     }
 
     public BigInteger toBigInteger() {
@@ -32,6 +36,6 @@ public class PrivateKey {
 
     @Override
     public String toString() {
-        return new BigInteger(raw).toString(16);
+        return ECKey.fromPrivate(raw).getPrivateKeyAsHex();
     }
 }

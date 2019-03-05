@@ -10,5 +10,5 @@ public interface ChainState {
     String getAddress(PublicKey pubKey);
 
     // HashMap<String, Object> decodeRawTransaction(byte[] rawTx);
-    byte[] signRawTransaction(byte[] rawTx, ArrayList<byte[]> keys);
+    byte[] signRawTransaction(byte[] rawTx, ArrayList<PrivateKey> keys);
 }

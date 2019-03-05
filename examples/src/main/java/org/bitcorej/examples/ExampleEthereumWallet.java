@@ -6,7 +6,7 @@ import org.bitcorej.core.HDWallet;
 import org.bitcorej.core.Network;
 import org.bitcorej.core.PrivateKey;
 
-public class SampleEthereumWallet {
+public class ExampleEthereumWallet {
     public static void main(String[] args) throws Exception {
         HDWallet wallet = new HDWallet("say tongue select oil blossom pond parent orphan crater sadness position coin");
 

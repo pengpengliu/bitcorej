@@ -29,6 +29,6 @@ public class PublicKey {
 
     @Override
     public String toString() {
-        return new BigInteger(raw).toString(16);
+        return ECKey.fromPublicOnly(raw).getPublicKeyAsHex();
     }
 }

@@ -19,7 +19,6 @@ public class ChainStateProxy implements ChainState {
         services.put("BTC_TEST", new BitcoinStateProvider(Network.TEST));
         services.put("BTC_REGTEST", new BitcoinStateProvider(Network.REGTEST));
         services.put("ETH_MAIN", new EthereumStateProvider());
-        services.put("ETH_TEST", new EthereumStateProvider());
     }
 
     private ChainState provider;
@@ -42,7 +41,7 @@ public class ChainStateProxy implements ChainState {
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, ArrayList<byte[]> keys) {
+    public byte[] signRawTransaction(byte[] rawTx, ArrayList<PrivateKey> keys) {
         return provider.signRawTransaction(rawTx, keys);
     }
 }
