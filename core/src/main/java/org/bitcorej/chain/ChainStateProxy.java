@@ -6,8 +6,8 @@ import org.bitcorej.core.Network;
 import org.bitcorej.core.PrivateKey;
 import org.bitcorej.core.PublicKey;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ChainStateProxy implements ChainState {
     private static HashMap<String, ChainState> services;
@@ -31,17 +31,22 @@ public class ChainStateProxy implements ChainState {
     }
 
     @Override
-    public String getAddress(PrivateKey privKey) {
-        return provider.getAddress(privKey);
+    public String createAddress(PrivateKey privKey) {
+        return provider.createAddress(privKey);
     }
 
     @Override
-    public String getAddress(PublicKey pubKey) {
-        return provider.getAddress(pubKey);
+    public String createAddress(PublicKey pubKey) {
+        return provider.createAddress(pubKey);
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, ArrayList<PrivateKey> keys) {
+    public String createAddress(List<PublicKey> publicKeys) {
+        return provider.createAddress(publicKeys);
+    }
+
+    @Override
+    public byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys) {
         return provider.signRawTransaction(rawTx, keys);
     }
 }

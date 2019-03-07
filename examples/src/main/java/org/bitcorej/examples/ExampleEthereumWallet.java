@@ -17,6 +17,6 @@ public class ExampleEthereumWallet {
         System.out.println(privKey.toPublicKey());
 
         ChainState eth = new ChainStateProxy("eth", "main");
-        System.out.println(eth.getAddress(privKey));
+        System.out.println(eth.createAddress(privKey));
     }
 }

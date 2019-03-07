@@ -7,21 +7,26 @@ import org.web3j.crypto.Keys;
 import org.web3j.crypto.Sign;
 import org.web3j.utils.Numeric;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class EthereumStateProvider implements ChainState {
     @Override
-    public String getAddress(PrivateKey privKey) {
+    public String createAddress(PrivateKey privKey) {
         return Numeric.prependHexPrefix(Keys.getAddress(Sign.publicKeyFromPrivate(privKey.toBigInteger())));
     }
 
     @Override
-    public String getAddress(PublicKey pubKey) {
+    public String createAddress(PublicKey pubKey) {
         return Numeric.prependHexPrefix(Keys.getAddress(pubKey.toBigInteger()));
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, ArrayList<PrivateKey> keys) {
+    public String createAddress(List<PublicKey> publicKeys) {
+        return null;
+    }
+
+    @Override
+    public byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys) {
         return new byte[0];
     }
 }

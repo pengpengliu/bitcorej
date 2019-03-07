@@ -1,5 +1,6 @@
 package org.bitcorej.chain.bitcoin;
 
+import com.google.common.collect.ImmutableList;
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
@@ -13,6 +14,7 @@ import org.bitcorej.core.PrivateKey;
 import org.bitcorej.core.PublicKey;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BitcoinStateProvider implements ChainState {
     private final static long DUST_THRESHOLD = 2730;
@@ -34,20 +36,39 @@ public class BitcoinStateProvider implements ChainState {
     }
 
     @Override
-    public String getAddress(PrivateKey privKey) {
+    public String createAddress(PrivateKey privKey) {
         // update network
         return new PrivateKey(privKey.toString(), network).toPublicKey().toAddress();
     }
 
     @Override
-    public String getAddress(PublicKey pubKey) {
+    public String createAddress(PublicKey pubKey) {
         // update network
         return new PublicKey(pubKey.toString(), network).toAddress();
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, ArrayList<PrivateKey> keys) {
-        Transaction tx = new Transaction(params, rawTx);
+    public String createAddress(List<PublicKey> publicKeys) {
+        if (publicKeys.size() == 1) {
+            return new PublicKey(publicKeys.get(0).toString(), network).toAddress();
+        } else if (publicKeys.size() == 3) {
+            List<ECKey> keys = ImmutableList.of(
+                    ECKey.fromPublicOnly(publicKeys.get(0).getRaw()),
+                    ECKey.fromPublicOnly(publicKeys.get(1).getRaw()),
+                    ECKey.fromPublicOnly(publicKeys.get(2).getRaw())
+            );
+            Script redeemScript = ScriptBuilder.createRedeemScript(2, keys);
+            Script script = ScriptBuilder.createP2SHOutputScript(redeemScript);
+
+            Address multisig = Address.fromP2SHScript(params, script);
+            return multisig.toString();
+        }
+        return null;
+    }
+
+    @Override
+    public byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys) {
+        Transaction tx = new Transaction(this.params, rawTx);
 
         for (int i = 0; i < tx.getInputs().size(); i++) {
             TransactionInput input = tx.getInput(i);
@@ -55,18 +76,16 @@ public class BitcoinStateProvider implements ChainState {
 
             ECKey ecKey = ECKey.fromPrivate(key.getRaw());
 
-//            Script scriptPubKey = ScriptBuilder.createOutputScript(ecKey);
-
-            Script scriptPubKey = ScriptBuilder.createOutputScript(ecKey.toAddress(network.getNetworkParameters()));
+            Script scriptPubKey = ScriptBuilder.createOutputScript(ecKey.toAddress(this.params));
 
             Sha256Hash hash = tx.hashForSignature(i, scriptPubKey, Transaction.SigHash.ALL, false);
             ECKey.ECDSASignature ecSig = ecKey.sign(hash);
             TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.ALL, false);
             if (scriptPubKey.isSentToRawPubKey()) {
-                input.setScriptSig(ScriptBuilder.createInputScript(txSig, ecKey));
+                input.setScriptSig(ScriptBuilder.createInputScript(txSig));
             } else {
                 if (!scriptPubKey.isSentToAddress()) {
-                    return new byte[0];
+                    return null;
                 }
                 input.setScriptSig(ScriptBuilder.createInputScript(txSig, ecKey));
             }

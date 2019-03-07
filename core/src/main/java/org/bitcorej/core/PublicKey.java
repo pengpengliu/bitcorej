@@ -18,6 +18,10 @@ public class PublicKey {
         this.network = network;
     }
 
+    public byte[] getRaw() {
+        return raw;
+    }
+
     public String toAddress() {
         ECKey key = ECKey.fromPublicOnly(raw);
         return key.toAddress(this.network.getNetworkParameters()).toString();
