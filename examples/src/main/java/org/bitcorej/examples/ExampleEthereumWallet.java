@@ -5,6 +5,10 @@ import org.bitcorej.chain.ChainStateProxy;
 import org.bitcorej.core.HDWallet;
 import org.bitcorej.core.Network;
 import org.bitcorej.core.PrivateKey;
+import org.bitcorej.utils.NumericUtil;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
 
 public class ExampleEthereumWallet {
     public static void main(String[] args) throws Exception {
@@ -18,5 +22,11 @@ public class ExampleEthereumWallet {
 
         ChainState eth = new ChainStateProxy("eth", "main");
         System.out.println(eth.createAddress(privKey));
+        String rawTxHex = "f86a8204b3843b9aca0082ea609453e7e00ffb9258cc52f331a4198d2e8f28b5711680b844a9059cbb0000000000000000000000003ffc930c83848cbd72735e1d63bbff46a0d7a56000000000000000000000000000000000000000000000000000000000000000641c8080";
+        byte[] rawTxBytes = new BigInteger(rawTxHex, 16).toByteArray();
+        ArrayList<PrivateKey> keys = new ArrayList<>();
+        keys.add(privKey);
+        byte[] signedTx = eth.signRawTransaction(rawTxBytes, keys);
+        System.out.println(NumericUtil.bytesToHex(signedTx));
     }
 }
