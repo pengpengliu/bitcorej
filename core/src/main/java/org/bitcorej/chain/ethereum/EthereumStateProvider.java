@@ -34,6 +34,11 @@ public class EthereumStateProvider implements ChainState {
     }
 
     @Override
+    public String generatePublicKey(PrivateKey privKey) {
+        return null;
+    }
+
+    @Override
     public byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys) {
         RawTransaction tx;
         byte[] transaction = Numeric.hexStringToByteArray(NumericUtil.bytesToHex(rawTx));

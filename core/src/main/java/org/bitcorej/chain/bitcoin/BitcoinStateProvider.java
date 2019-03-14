@@ -67,11 +67,17 @@ public class BitcoinStateProvider implements ChainState {
     }
 
     @Override
+    public String generatePublicKey(PrivateKey privKey) {
+        return null;
+    }
+
+    @Override
     public byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys) {
         Transaction tx = new Transaction(this.params, rawTx);
 
         for (int i = 0; i < tx.getInputs().size(); i++) {
             TransactionInput input = tx.getInput(i);
+
             PrivateKey key = keys.get(i);
 
             ECKey ecKey = ECKey.fromPrivate(key.getRaw());

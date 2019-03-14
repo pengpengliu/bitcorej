@@ -20,7 +20,7 @@ public class ExampleEthereumWallet {
         // 0x02a7554174e12b2b9fd9b2f83ac2ac7eb9c375cc38357fbf77deb277f37d2c625f
         System.out.println(privKey.toPublicKey());
 
-        ChainState eth = new ChainStateProxy("eth", "main");
+        ChainState eth = new ChainStateProxy("eth");
         System.out.println(eth.createAddress(privKey));
         String rawTxHex = "f86a8204b3843b9aca0082ea609453e7e00ffb9258cc52f331a4198d2e8f28b5711680b844a9059cbb0000000000000000000000003ffc930c83848cbd72735e1d63bbff46a0d7a56000000000000000000000000000000000000000000000000000000000000000641c8080";
         byte[] rawTxBytes = new BigInteger(rawTxHex, 16).toByteArray();
