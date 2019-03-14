@@ -3,7 +3,6 @@ package org.bitcorej.core;
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.crypto.HDUtils;
-import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.web3j.crypto.MnemonicUtils;

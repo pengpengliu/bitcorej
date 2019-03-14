@@ -10,11 +10,11 @@ public class ExampleRippleWallet {
     public static void main(String[] args) throws Exception {
         HDWallet wallet = new HDWallet("say tongue select oil blossom pond parent orphan crater sadness position coin");
 
-        PrivateKey privKey = wallet.derivedKey("m/44'/144'/0'/0/0", Network.TEST).getPrivKey();
+        PrivateKey privKey = wallet.derivedKey("m/44'/144'/0'/0/0", Network.MAIN).getPrivKey();
         System.out.println(privKey.toString());
         System.out.println(privKey.toPublicKey().toString());
 
-        ChainState btc = new ChainStateProxy("xrp");
-        System.out.println("Ripple address is: " + btc.createAddress(privKey.toPublicKey()));
+        ChainState xrp = new ChainStateProxy("xrp");
+        System.out.println("Ripple address is: " + xrp.createAddress(privKey.toPublicKey()));
     }
 }

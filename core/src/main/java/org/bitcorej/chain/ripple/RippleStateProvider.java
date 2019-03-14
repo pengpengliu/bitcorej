@@ -26,13 +26,11 @@ public class RippleStateProvider implements ChainState {
         pubKeyInnerHash.update(pubKeyData, 0, pubKeyData.length);
         byte[] pubKeyInnerBytes = new byte[pubKeyInnerHash.getDigestSize()];
         pubKeyInnerHash.doFinal(pubKeyInnerBytes, 0);
-        System.out.println(NumericUtil.bytesToHex(pubKeyInnerBytes));
 
         RIPEMD160Digest pubKeyOuterHash = new RIPEMD160Digest();
         pubKeyOuterHash.update(pubKeyInnerBytes, 0, pubKeyInnerHash.getDigestSize());
         byte[] accountId = new byte[pubKeyOuterHash.getDigestSize()];
         pubKeyOuterHash.doFinal(accountId, 0);
-        System.out.println(NumericUtil.bytesToHex(accountId));
 
         byte[] addressTypePrefix = NumericUtil.hexToBytes("0x00");
         byte[] payload = ByteUtil.concat(addressTypePrefix, accountId);
