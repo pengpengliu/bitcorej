@@ -1,8 +1,7 @@
 package org.bitcorej.chain.ripple;
 
-import org.bitcoinj.core.ECKey;
 import org.bitcorej.chain.ChainState;
-import org.bitcorej.core.PrivateKey;
+import org.bitcorej.chain.KeyPair;
 import org.bitcorej.core.PublicKey;
 import org.bitcorej.utils.ByteUtil;
 import org.bitcorej.utils.NumericUtil;
@@ -13,13 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RippleStateProvider implements ChainState {
-    @Override
-    public String createAddress(PrivateKey privKey) {
-        return null;
-    }
 
-    @Override
-    public String createAddress(PublicKey pubKey) {
+    private String createAddress(PublicKey pubKey) {
         byte[] pubKeyData = pubKey.getRaw();
 
         SHA256Digest pubKeyInnerHash = new SHA256Digest();
@@ -48,17 +42,17 @@ public class RippleStateProvider implements ChainState {
     }
 
     @Override
-    public String createAddress(List<PublicKey> publicKeys) {
+    public KeyPair generateKeyPair(String secret) {
         return null;
     }
 
     @Override
-    public String generatePublicKey(PrivateKey privKey) {
+    public KeyPair generateKeyPair() {
         return null;
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys) {
+    public byte[] signRawTransaction(byte[] rawTx, List<String> keys) {
         return new byte[0];
     }
 }

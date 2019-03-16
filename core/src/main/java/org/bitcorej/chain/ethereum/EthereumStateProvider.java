@@ -1,12 +1,11 @@
 package org.bitcorej.chain.ethereum;
 
+import org.bitcoinj.core.ECKey;
 import org.bitcorej.chain.ChainState;
-import org.bitcorej.core.PrivateKey;
-import org.bitcorej.core.PublicKey;
+import org.bitcorej.chain.KeyPair;
 import org.bitcorej.utils.NumericUtil;
 import org.web3j.crypto.*;
 import org.web3j.rlp.RlpDecoder;
-import org.web3j.rlp.RlpEncoder;
 import org.web3j.rlp.RlpList;
 import org.web3j.rlp.RlpString;
 import org.web3j.utils.Numeric;
@@ -15,31 +14,21 @@ import java.math.BigInteger;
 import java.util.List;
 
 public class EthereumStateProvider implements ChainState {
+
     @Override
-    public String createAddress(PrivateKey privKey) {
-        return Numeric.prependHexPrefix(Keys.getAddress(Sign.publicKeyFromPrivate(privKey.toBigInteger())));
+    public KeyPair generateKeyPair(String secret) {
+        ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(secret));
+
+        return new KeyPair(ecKey.getPrivateKeyAsHex(), Numeric.prependHexPrefix(Keys.getAddress(new BigInteger(ecKey.getPubKey()))));
     }
 
     @Override
-    public String createAddress(PublicKey pubKey) {
-        return Numeric.prependHexPrefix(Keys.getAddress(pubKey.toBigInteger()));
+    public KeyPair generateKeyPair() {
+        return this.generateKeyPair(new ECKey().getPrivateKeyAsHex());
     }
 
     @Override
-    public String createAddress(List<PublicKey> publicKeys) {
-        if ( publicKeys.size() == 1 ) {
-            return this.createAddress(publicKeys.get(0));
-        }
-        return null;
-    }
-
-    @Override
-    public String generatePublicKey(PrivateKey privKey) {
-        return null;
-    }
-
-    @Override
-    public byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys) {
+    public byte[] signRawTransaction(byte[] rawTx, List<String> keys) {
         RawTransaction tx;
         byte[] transaction = Numeric.hexStringToByteArray(NumericUtil.bytesToHex(rawTx));
         RlpList rlpList = RlpDecoder.decode(transaction);
@@ -63,6 +52,6 @@ public class EthereumStateProvider implements ChainState {
             tx = RawTransaction.createTransaction(nonce,
                     gasPrice, gasLimit, to, value, data);
         }
-        return TransactionEncoder.signMessage(tx, Credentials.create(keys.get(0).toString()));
+        return TransactionEncoder.signMessage(tx, Credentials.create(keys.get(0)));
     }
 }

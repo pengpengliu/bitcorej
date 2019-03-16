@@ -1,18 +1,10 @@
 package org.bitcorej.chain;
 
-import org.bitcorej.core.PrivateKey;
-import org.bitcorej.core.PublicKey;
-
 import java.util.List;
 
 public interface ChainState {
-    String createAddress(PrivateKey privKey);
-    String createAddress(PublicKey pubKey);
+    KeyPair generateKeyPair(String secret);
+    KeyPair generateKeyPair();
 
-    String createAddress(List<PublicKey> publicKeys);
-
-    String generatePublicKey(PrivateKey privKey);
-
-    // HashMap<String, Object> decodeRawTransaction(byte[] rawTx);
-    byte[] signRawTransaction(byte[] rawTx, List<PrivateKey> keys);
+    byte[] signRawTransaction(byte[] rawTx, List<String> keys);
 }

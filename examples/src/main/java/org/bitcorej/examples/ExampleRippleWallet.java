@@ -14,7 +14,5 @@ public class ExampleRippleWallet {
         System.out.println(privKey.toString());
         System.out.println(privKey.toPublicKey().toString());
 
-        ChainState xrp = new ChainStateProxy("xrp");
-        System.out.println("Ripple address is: " + xrp.createAddress(privKey.toPublicKey()));
     }
 }
