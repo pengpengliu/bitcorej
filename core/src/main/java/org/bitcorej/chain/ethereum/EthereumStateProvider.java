@@ -28,9 +28,9 @@ public class EthereumStateProvider implements ChainState {
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, List<String> keys) {
+    public String signRawTransaction(String rawTx, List<String> keys) {
         RawTransaction tx;
-        byte[] transaction = Numeric.hexStringToByteArray(NumericUtil.bytesToHex(rawTx));
+        byte[] transaction = Numeric.hexStringToByteArray(rawTx);
         RlpList rlpList = RlpDecoder.decode(transaction);
         RlpList values = (RlpList) rlpList.getValues().get(1);
         BigInteger nonce = ((RlpString) values.getValues().get(0)).asPositiveBigInteger();
@@ -52,6 +52,6 @@ public class EthereumStateProvider implements ChainState {
             tx = RawTransaction.createTransaction(nonce,
                     gasPrice, gasLimit, to, value, data);
         }
-        return TransactionEncoder.signMessage(tx, Credentials.create(keys.get(0)));
+        return NumericUtil.bytesToHex(TransactionEncoder.signMessage(tx, Credentials.create(keys.get(0))));
     }
 }

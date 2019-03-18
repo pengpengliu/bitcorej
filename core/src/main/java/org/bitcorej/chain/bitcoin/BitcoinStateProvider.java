@@ -1,5 +1,6 @@
 package org.bitcorej.chain.bitcoin;
 
+import com.google.common.math.LongMath;
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
@@ -10,8 +11,12 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.core.Network;
+import org.bitcorej.core.PrivateKey;
 import org.bitcorej.utils.NumericUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class BitcoinStateProvider implements ChainState {
@@ -44,20 +49,46 @@ public class BitcoinStateProvider implements ChainState {
         return this.generateKeyPair(new ECKey().getPrivateKeyAsHex());
     }
 
+
+    private Transaction buildTransaction(String json) {
+        JSONObject jsonObject = new JSONObject(json);
+        Transaction tx = new Transaction(this.params);
+
+        JSONArray inputs = jsonObject.getJSONArray("inputs");
+        for (int i = 0; i < inputs.length(); i++) {
+            JSONObject input = inputs.getJSONObject(i);
+            tx.addInput(new Sha256Hash(input.getString("txid")), input.getLong("vout"), new Script(NumericUtil.hexToBytes(input.getJSONObject("output").getString("script"))));
+        }
+        JSONArray outputs = jsonObject.getJSONArray("outputs");
+        for (int i = 0; i < outputs.length(); i++) {
+            JSONObject output = outputs.getJSONObject(i);
+            Coin coin = Coin.valueOf(new BigDecimal(output.getString("amount")).multiply(BigDecimal.valueOf(LongMath.pow(10, 8))).longValue());
+            tx.addOutput(new TransactionOutput(this.params, tx, coin, NumericUtil.hexToBytes(output.getString("script"))));
+        }
+        return tx;
+    }
+
+    private String selectPrivateKeys(Script script, List<String> keys) {
+        for (int i = 0; i < keys.size(); i++) {
+            if (script.getToAddress(this.params).toString().equals(new PrivateKey(keys.get(i), this.network).toPublicKey().toAddress())) {
+                return keys.get(i);
+            }
+        }
+        return "";
+    }
+
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, List<String> keys) {
-        Transaction tx = new Transaction(this.params, rawTx);
+    public String signRawTransaction(String rawTx, List<String> keys) {
+        Transaction tx = buildTransaction(rawTx);
 
         for (int i = 0; i < tx.getInputs().size(); i++) {
             TransactionInput input = tx.getInput(i);
 
-            String key = keys.get(i);
+            Script scriptPubKey = new Script(input.getScriptBytes());
 
-            ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(key));
+            ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(this.selectPrivateKeys(scriptPubKey, keys)));
 
-            Script scriptPubKey = ScriptBuilder.createOutputScript(ecKey.toAddress(this.params));
-
-            Sha256Hash hash = tx.hashForSignature(i, scriptPubKey, Transaction.SigHash.ALL, false);
+            Sha256Hash hash = tx.hashForSignature(i, new Script(input.getScriptBytes()), Transaction.SigHash.ALL, false);
             ECKey.ECDSASignature ecSig = ecKey.sign(hash);
             TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.ALL, false);
             if (scriptPubKey.isSentToRawPubKey()) {
@@ -70,6 +101,6 @@ public class BitcoinStateProvider implements ChainState {
             }
         }
         
-        return tx.bitcoinSerialize();
+        return NumericUtil.bytesToHex(tx.bitcoinSerialize());
     }
 }

@@ -14,5 +14,6 @@ dependencies {
     implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
     implementation 'org.web3j:crypto:4.1.1'
     implementation 'org.slf4j:slf4j-jdk14:1.7.25'
+    implementation group: 'org.json', name: 'json', version: '20180813'
     testImplementation 'junit:junit:4.12'
 }

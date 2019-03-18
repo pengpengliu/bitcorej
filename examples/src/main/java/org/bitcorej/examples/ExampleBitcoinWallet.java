@@ -5,7 +5,6 @@ import org.bitcorej.chain.ChainStateProxy;
 import org.bitcorej.core.*;
 import org.bitcorej.utils.NumericUtil;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class ExampleBitcoinWallet {
@@ -23,13 +22,12 @@ public class ExampleBitcoinWallet {
 
         ChainState btc = new ChainStateProxy("btc", "test");
 
-        // 01000000017335aed204417492dadd3fdecabcd2f80c35cc374a47f4162a06f93176308aaf010000006a47304402204d666ca4c7234536b9aadfd0eb0ec3b2dca61acc2f57a6b0c9672661b760990602202ffe635d91effa77247e0d46212c84981be2bd654778929e7bd5736e3e4da60701210254dec37f0858dd993798f8b31ba912eb3cee803ac4209596cc79c804a2f3c201ffffffff0210270000000000001976a91415c5e0965754cd540c719aac3e52d36b2d9a815288ac28cfb500000000001976a91415c5e0965754cd540c719aac3e52d36b2d9a815288ac00000000
-        // 0100000001a80cd17dff8f78911d0c4ade3752ce7e130beff0d3af57fd826e7c9ae872d31a010000006b483045022100c38fce706f7a94f578cac84f64090402b8edc35edeb8319c886fc19b433931c002206256a81b2beabb2bbbc4f3074e6872d28a67b3b565584ff56fafbbac1c7ed61e01210254dec37f0858dd993798f8b31ba912eb3cee803ac4209596cc79c804a2f3c201ffffffff0110270000000000001976a91415c5e0965754cd540c719aac3e52d36b2d9a815288ac00000000
-        String rawTxHex = "010000000186e5fd21ec81bff6dae076274c3ed1809b106c4b98c466a3505dff9ce52f249e0100000000ffffffff0210270000000000001976a91415c5e0965754cd540c719aac3e52d36b2d9a815288ac6ae19900000000001976a91415c5e0965754cd540c719aac3e52d36b2d9a815288ac00000000";
-        byte[] rawTxBytes = new BigInteger(rawTxHex, 16).toByteArray();
+        System.out.println(btc.generateKeyPair(privKey.toString()));
+
+        String rawTxHex = "{\"txid\":\"b1a77ffb20e14ce7532b3512eaddae483fda845e151a325fbd9f67866b15d513\",\"version\":1,\"inputs\":[{\"txid\":\"8d92624079c3862d8f14364834761953eca53aa2ccd34f29e907c0759a80a68f\",\"vout\":0,\"sequence\":4294967295,\"output\":{\"amount\":\"0.10050414\",\"script\":\"76a9147b70f5931cb13d4a3fb60cdb42544ecb6109086688ac\"}}],\"outputs\":[{\"amount\":\"0.0001\",\"script\":\"76a914d6ed6281b5e52c30aceb25f1547c34ff47c9913c88ac\"},{\"amount\":\"0.10020414\",\"script\":\"76a914d6ed6281b5e52c30aceb25f1547c34ff47c9913c88ac\"}],\"nLockTime\":0}";
         ArrayList<String> keys = new ArrayList<>();
         keys.add(privKey.toString());
-        byte[] signedTx = btc.signRawTransaction(rawTxBytes, keys);
-        System.out.println(NumericUtil.bytesToHex(signedTx));
+        String signedTx = btc.signRawTransaction(rawTxHex, keys);
+        System.out.println(signedTx);
     }
 }

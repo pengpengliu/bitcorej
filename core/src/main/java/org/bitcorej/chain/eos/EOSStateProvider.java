@@ -33,7 +33,7 @@ public class EOSStateProvider implements ChainState {
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, List<String> keys) {
-        return new byte[0];
+    public String signRawTransaction(String rawTx, List<String> keys) {
+        return null;
     }
 }

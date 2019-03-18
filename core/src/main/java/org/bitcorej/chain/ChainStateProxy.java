@@ -6,7 +6,6 @@ import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
 import org.bitcorej.core.Network;
-import org.bitcorej.core.PublicKey;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +51,7 @@ public class ChainStateProxy implements ChainState {
     }
 
     @Override
-    public byte[] signRawTransaction(byte[] rawTx, List<String> keys) {
+    public String signRawTransaction(String rawTx, List<String> keys) {
         return provider.signRawTransaction(rawTx, keys);
     }
 }
