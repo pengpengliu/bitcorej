@@ -57,7 +57,7 @@ public class BitcoinStateProvider implements ChainState {
         JSONArray inputs = jsonObject.getJSONArray("inputs");
         for (int i = 0; i < inputs.length(); i++) {
             JSONObject input = inputs.getJSONObject(i);
-            tx.addInput(new Sha256Hash(input.getString("txid")), input.getLong("vout"), new Script(NumericUtil.hexToBytes(input.getJSONObject("output").getString("script"))));
+            tx.addInput(Sha256Hash.wrap(input.getString("txid")), input.getLong("vout"), new Script(NumericUtil.hexToBytes(input.getJSONObject("output").getString("script"))));
         }
         JSONArray outputs = jsonObject.getJSONArray("outputs");
         for (int i = 0; i < outputs.length(); i++) {
