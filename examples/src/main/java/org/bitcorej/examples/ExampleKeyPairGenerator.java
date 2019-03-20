@@ -12,7 +12,10 @@ public class ExampleKeyPairGenerator {
         ChainState eth = new ChainStateProxy("eth");
         System.out.println(eth.generateKeyPair());
 
-        ChainState eos = new ChainStateProxy("eos");
+        ChainState eos = new ChainStateProxy("eos", "main");
         System.out.println(eos.generateKeyPair());
+
+        ChainState xrp = new ChainStateProxy("xrp");
+        System.out.println(xrp.generateKeyPair());
     }
 }
