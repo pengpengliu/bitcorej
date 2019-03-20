@@ -5,10 +5,8 @@ import com.ripple.core.coretypes.Amount;
 import com.ripple.core.coretypes.uint.UInt32;
 import com.ripple.core.types.known.tx.signed.SignedTransaction;
 import com.ripple.core.types.known.tx.txns.Payment;
-import net.i2p.crypto.eddsa.KeyPairGenerator;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
-import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -49,8 +47,7 @@ public class RippleStateProvider implements ChainState {
 
     @Override
     public KeyPair generateKeyPair() {
-        java.security.KeyPair keypair = new KeyPairGenerator().generateKeyPair();
-        return new KeyPair(NumericUtil.bytesToHex(keypair.getPrivate().getEncoded()), NumericUtil.bytesToHex(keypair.getPublic().getEncoded()));
+        return null;
     }
 
     @Override
