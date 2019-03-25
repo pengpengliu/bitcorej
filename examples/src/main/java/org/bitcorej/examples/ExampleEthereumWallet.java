@@ -17,7 +17,7 @@ public class ExampleEthereumWallet {
         ChainState eth = new ChainStateProxy("eth");
 
         System.out.println(eth.generateKeyPair(privKey.toString()));
-        String rawTxHex = "f86a8204b3843b9aca0082ea609453e7e00ffb9258cc52f331a4198d2e8f28b5711680b844a9059cbb0000000000000000000000003ffc930c83848cbd72735e1d63bbff46a0d7a56000000000000000000000000000000000000000000000000000000000000000641c8080";
+        String rawTxHex = "{\"from\":\"0x3ffc930c83848cbd72735e1d63bbff46a0d7a560\",\"to\":\"0x3ffc930c83848cbd72735e1d63bbff46a0d7a560\",\"value\":\"0x16345785d8a0000\",\"gas\":\"0x5208\",\"gasPrice\":\"0x3b9aca00\",\"nonce\":\"0x3\",\"data\":\"0x\"}";
         ArrayList<String> keys = new ArrayList<>();
         keys.add(privKey.toString());
         String signedTx = eth.signRawTransaction(rawTxHex, keys);

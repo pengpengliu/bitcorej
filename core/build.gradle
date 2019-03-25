@@ -13,10 +13,12 @@ repositories {
 dependencies {
     compile fileTree(dir:'libs',include:['*.jar'])
 
-    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
+//    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
+    implementation 'cash.bitcoinj:bitcoinj-core:0.14.5.2'
     implementation 'org.web3j:crypto:4.1.1'
     implementation 'org.slf4j:slf4j-jdk14:1.7.25'
-    implementation group: 'org.json', name: 'json', version: '20180813'
+    implementation 'org.json:json:20180813'
     implementation 'com.google.code.gson:gson:2.8.1'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.5.0'
     testImplementation 'junit:junit:4.12'
 }

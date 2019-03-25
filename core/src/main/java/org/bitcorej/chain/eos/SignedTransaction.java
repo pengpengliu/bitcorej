@@ -65,12 +65,12 @@ public class SignedTransaction extends Transaction {
         return Hash.sha256(writer.toBytes());
     }
 
-    public void sign(String privateKey, TypeChainId chainId) {
+    public void sign(byte[] prvKey, TypeChainId chainId) {
         if ( null == this.signatures){
             this.signatures = new ArrayList<>();
         }
 
-        String signature = EOSSign.sign(getDigestForSignature( chainId ), privateKey);
+        String signature = EOSSign.sign(getDigestForSignature( chainId ), prvKey);
 
         this.signatures.add(signature);
     }

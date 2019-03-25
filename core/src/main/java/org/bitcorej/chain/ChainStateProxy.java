@@ -18,6 +18,7 @@ public class ChainStateProxy implements ChainState {
         services = new HashMap<>();
         services.put("BTC_MAIN", new BitcoinStateProvider(Network.MAIN));
         services.put("BTC_TEST", new BitcoinStateProvider(Network.TEST));
+        services.put("BCH_TEST", new BitcoinStateProvider(Network.TEST));
         services.put("ETH", new EthereumStateProvider());
         services.put("EOS_MAIN", new EOSStateProvider(Network.MAIN));
         services.put("EOS_TEST", new EOSStateProvider(Network.TEST));

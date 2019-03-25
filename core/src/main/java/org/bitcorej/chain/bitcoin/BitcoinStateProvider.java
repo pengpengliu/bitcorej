@@ -20,8 +20,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class BitcoinStateProvider implements ChainState {
-    private final static long DUST_THRESHOLD = 2730;
-
     private Network network;
     private NetworkParameters params;
 
@@ -29,14 +27,24 @@ public class BitcoinStateProvider implements ChainState {
         switch (network) {
             case MAIN:
                 params = MainNetParams.get();
+                break;
             case TEST:
                 params = TestNet3Params.get();
+                break;
             case REGTEST:
                 params = RegTestParams.get();
+                break;
         }
 
         this.network = network;
     }
+
+    public String calcSegWitAddress(String legacyAddress) {
+        byte[] pubKeyHash = Address.fromBase58(this.params, legacyAddress).getHash160();
+        String redeemScript = String.format("0x0014%s", NumericUtil.bytesToHex(pubKeyHash));
+        return Address.fromP2SHHash(this.params, Utils.sha256hash160(NumericUtil.hexToBytes(redeemScript))).toBase58();
+    }
+
 
     @Override
     public KeyPair generateKeyPair(String secret) {
@@ -50,7 +58,7 @@ public class BitcoinStateProvider implements ChainState {
     }
 
 
-    private Transaction buildTransaction(String json) {
+    protected Transaction buildTransaction(String json) {
         JSONObject jsonObject = new JSONObject(json);
         Transaction tx = new Transaction(this.params);
 
@@ -68,13 +76,13 @@ public class BitcoinStateProvider implements ChainState {
         return tx;
     }
 
-    private String selectPrivateKeys(Script script, List<String> keys) {
+    protected String selectPrivateKeys(Script script, List<String> keys) {
         for (int i = 0; i < keys.size(); i++) {
             if (script.getToAddress(this.params).toString().equals(new PrivateKey(keys.get(i), this.network).toPublicKey().toAddress())) {
                 return keys.get(i);
             }
         }
-        return "";
+        return null;
     }
 
     @Override
@@ -83,7 +91,6 @@ public class BitcoinStateProvider implements ChainState {
 
         for (int i = 0; i < tx.getInputs().size(); i++) {
             TransactionInput input = tx.getInput(i);
-
             Script scriptPubKey = new Script(input.getScriptBytes());
 
             ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(this.selectPrivateKeys(scriptPubKey, keys)));
@@ -91,6 +98,7 @@ public class BitcoinStateProvider implements ChainState {
             Sha256Hash hash = tx.hashForSignature(i, new Script(input.getScriptBytes()), Transaction.SigHash.ALL, false);
             ECKey.ECDSASignature ecSig = ecKey.sign(hash);
             TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.ALL, false);
+
             if (scriptPubKey.isSentToRawPubKey()) {
                 input.setScriptSig(ScriptBuilder.createInputScript(txSig));
             } else {

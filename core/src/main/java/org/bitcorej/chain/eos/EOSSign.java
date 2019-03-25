@@ -16,14 +16,15 @@ import static org.bitcoinj.core.ECKey.CURVE;
 
 public class EOSSign {
 
-    public static String sign(byte[] dataSha256, String prvKey) {
-        ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(prvKey));
+    public static String sign(byte[] dataSha256, byte[] prvKey) {
+        System.out.println("====" + NumericUtil.bytesToHex(dataSha256));
+        ECKey ecKey = EOSKey.fromPrivate(prvKey).getECKey();
+        System.out.println(ecKey.getPrivateKeyAsHex());
         SignatureData signatureData = signAsRecoverable(dataSha256, ecKey);
         byte[] sigResult = ByteUtil.concat(NumericUtil.intToBytes(signatureData.getV()), signatureData.getR());
         sigResult = ByteUtil.concat(sigResult, signatureData.getS());
         return serialEOSSignature(sigResult);
     }
-
 
     private static SignatureData signAsRecoverable(byte[] value, ECKey ecKey) {
         int recId = -1;

@@ -4,10 +4,8 @@ import org.bitcoinj.core.ECKey;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.utils.NumericUtil;
+import org.json.JSONObject;
 import org.web3j.crypto.*;
-import org.web3j.rlp.RlpDecoder;
-import org.web3j.rlp.RlpList;
-import org.web3j.rlp.RlpString;
 import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
@@ -18,8 +16,8 @@ public class EthereumStateProvider implements ChainState {
     @Override
     public KeyPair generateKeyPair(String secret) {
         ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(secret));
-
-        return new KeyPair(ecKey.getPrivateKeyAsHex(), Numeric.prependHexPrefix(Keys.getAddress(new BigInteger(ecKey.getPubKey()))));
+        String address = Numeric.prependHexPrefix(Keys.getAddress(Sign.publicKeyFromPrivate(ecKey.getPrivKey())));
+        return new KeyPair(ecKey.getPrivateKeyAsHex(), address);
     }
 
     @Override
@@ -29,29 +27,20 @@ public class EthereumStateProvider implements ChainState {
 
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
-        RawTransaction tx;
-        byte[] transaction = Numeric.hexStringToByteArray(rawTx);
-        RlpList rlpList = RlpDecoder.decode(transaction);
-        RlpList values = (RlpList) rlpList.getValues().get(1);
-        BigInteger nonce = ((RlpString) values.getValues().get(0)).asPositiveBigInteger();
-        BigInteger gasPrice = ((RlpString) values.getValues().get(1)).asPositiveBigInteger();
-        BigInteger gasLimit = ((RlpString) values.getValues().get(2)).asPositiveBigInteger();
-        String to = ((RlpString) values.getValues().get(3)).asString();
-        BigInteger value = ((RlpString) values.getValues().get(4)).asPositiveBigInteger();
-        String data = ((RlpString) values.getValues().get(5)).asString();
-        if (values.getValues().size() > 6) {
-            byte v = ((RlpString) values.getValues().get(6)).getBytes()[0];
-            byte[] r = Numeric.toBytesPadded(
-                    Numeric.toBigInt(((RlpString) values.getValues().get(7)).getBytes()), 32);
-            byte[] s = Numeric.toBytesPadded(
-                    Numeric.toBigInt(((RlpString) values.getValues().get(8)).getBytes()), 32);
-            Sign.SignatureData signatureData = new Sign.SignatureData(v, r, s);
-            tx = new SignedRawTransaction(nonce, gasPrice, gasLimit,
-                    to, value, data, signatureData);
-        } else {
-            tx = RawTransaction.createTransaction(nonce,
-                    gasPrice, gasLimit, to, value, data);
-        }
-        return NumericUtil.bytesToHex(TransactionEncoder.signMessage(tx, Credentials.create(keys.get(0))));
+        JSONObject jsonObject = new JSONObject(rawTx);
+        BigInteger nonce = new BigInteger(NumericUtil.cleanHexPrefix(jsonObject.getString("nonce")), 16);
+        BigInteger gasPrice = new BigInteger(NumericUtil.cleanHexPrefix(jsonObject.getString("gasPrice")), 16);
+        BigInteger gasLimit = new BigInteger(NumericUtil.cleanHexPrefix(jsonObject.getString("gas")), 16);
+        BigInteger value = new BigInteger(NumericUtil.cleanHexPrefix(jsonObject.getString("value")), 16);
+        String to = jsonObject.getString("to");
+        String data = jsonObject.getString("data");
+        RawTransaction tx = RawTransaction.createTransaction(nonce,
+                gasPrice, gasLimit, to, value, data);
+
+        String signedTx = NumericUtil.bytesToHex(TransactionEncoder.signMessage(tx, Credentials.create(keys.get(0))));
+
+        JSONObject packed = new JSONObject();
+        packed.put("raw", Numeric.prependHexPrefix(signedTx));
+        return packed.toString();
     }
 }
