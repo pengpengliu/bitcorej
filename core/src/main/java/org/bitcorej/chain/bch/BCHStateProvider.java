@@ -16,6 +16,16 @@ public class BCHStateProvider extends BitcoinStateProvider {
     }
 
     @Override
+    public Boolean validateTx(String rawTx, String tx) {
+        return null;
+    }
+
+    @Override
+    public org.bitcorej.chain.Transaction decodeRawTransaction(String rawTx) {
+        return null;
+    }
+
+    @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         Transaction tx = super.buildTransaction(rawTx);
 

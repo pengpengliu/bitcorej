@@ -22,13 +22,15 @@ public class ExampleEOSWallet {
 
         ChainState eos = new ChainStateProxy("eos", "test");
 
-        String rawTx = "{\"expiration\":\"2019-03-22T03:11:44\",\"ref_block_num\":19594346,\"ref_block_prefix\":1109991391,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0,\"context_free_actions\":[],\"actions\":[{\"account\":\"eosio.token\",\"name\":\"transfer\",\"authorization\":[{\"actor\":\"teos4oneroot\",\"permission\":\"active\"}],\"data\":\"9029bd6a5282a9ca1042888667dab64a102700000000000004454f530000000006303030303036\"}],\"transaction_extensions\":[],\"signatures\":[],\"context_free_data\":[]}";
-        ArrayList<String> keys = new ArrayList<>();
-        keys.add("5KUZpcfAEtKMmZxQZbCp3HYJA29py744AbzKynWoXeKf2anQGFy");
-        String signedTx = eos.signRawTransaction(rawTx, keys);
-        System.out.println(signedTx);
-
-        // SIG_K1_KcRph4n4CNnTFWqdZK7WmmJENfE3SUDEscLQaA7mrFYiRJYuwszpEYwx55ZCsHRtip6t2bfxqJa1faM59kWPGrc7XNik2w
-        // SIG_K1_KciNeaMRn7GzNhVTL8PfW9xJQ37o1sBWUAQGpMD3tTJKQSpGhCpk2kzssRSMmemc7nth1wfVMczXySNjTMmArgH8XhaUNJ
+        String rawTxHex = "{\"expiration\":\"2019-03-26T07:42:53\",\"ref_block_num\":20309199,\"ref_block_prefix\":2040915149,\"max_net_usage_words\":0,\"max_cpu_usage_ms\":0,\"delay_sec\":0,\"context_free_actions\":[],\"actions\":[{\"code\":\"eosio.token\",\"action\":\"transfer\",\"args\":{\"from\":\"teos4oneroot\",\"to\":\"devhotwal111\",\"quantity\":\"1.0000 EOS\",\"memo\":\"000006\"}}],\"transaction_extensions\":[],\"signatures\":[],\"context_free_data\":[]}";
+        String requestTx = "{\"from\":[{\"address\":\"teos4oneroot\"}],\"to\":[{\"address\":\"devhotwal111\",\"amount\":\"1\",\"memo\":\"000006\"}]}";
+        if (eos.validateTx(rawTxHex, requestTx)) {
+            ArrayList<String> keys = new ArrayList<>();
+            keys.add("5KUZpcfAEtKMmZxQZbCp3HYJA29py744AbzKynWoXeKf2anQGFy");
+            String signedTx = eos.signRawTransaction(rawTxHex, keys);
+            System.out.println(signedTx);
+        } else {
+            System.out.println("Invalid transaction!");
+        }
     }
 }

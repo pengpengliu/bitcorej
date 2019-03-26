@@ -7,6 +7,7 @@ import com.ripple.core.types.known.tx.signed.SignedTransaction;
 import com.ripple.core.types.known.tx.txns.Payment;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
+import org.bitcorej.chain.Transaction;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -47,6 +48,16 @@ public class RippleStateProvider implements ChainState {
 
     @Override
     public KeyPair generateKeyPair() {
+        return null;
+    }
+
+    @Override
+    public Boolean validateTx(String rawTx, String tx) {
+        return null;
+    }
+
+    @Override
+    public Transaction decodeRawTransaction(String rawTx) {
         return null;
     }
 

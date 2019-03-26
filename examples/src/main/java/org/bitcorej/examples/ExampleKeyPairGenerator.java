@@ -14,8 +14,5 @@ public class ExampleKeyPairGenerator {
 
         ChainState eos = new ChainStateProxy("eos", "main");
         System.out.println(eos.generateKeyPair());
-
-        ChainState xrp = new ChainStateProxy("xrp");
-        System.out.println(xrp.generateKeyPair());
     }
 }

@@ -6,7 +6,7 @@ public interface ChainState {
     KeyPair generateKeyPair(String secret);
     KeyPair generateKeyPair();
 
-    // Boolean validateTx(List from, List to, String rawTx);
-
+    Boolean validateTx(String rawTx, String requestTx);
+    Transaction decodeRawTransaction(String rawTx);
     String signRawTransaction(String rawTx, List<String> keys);
 }

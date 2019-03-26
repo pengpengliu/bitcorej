@@ -2,11 +2,13 @@ package org.bitcorej.examples;
 
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.ChainStateProxy;
+import org.bitcorej.chain.Transaction;
 import org.bitcorej.core.HDWallet;
 import org.bitcorej.core.Network;
 import org.bitcorej.core.PrivateKey;
 import org.bitcorej.utils.NumericUtil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class ExampleEthereumWallet {
@@ -18,9 +20,15 @@ public class ExampleEthereumWallet {
 
         System.out.println(eth.generateKeyPair(privKey.toString()));
         String rawTxHex = "{\"from\":\"0x3ffc930c83848cbd72735e1d63bbff46a0d7a560\",\"to\":\"0x3ffc930c83848cbd72735e1d63bbff46a0d7a560\",\"value\":\"0x16345785d8a0000\",\"gas\":\"0x5208\",\"gasPrice\":\"0x3b9aca00\",\"nonce\":\"0x3\",\"data\":\"0x\"}";
-        ArrayList<String> keys = new ArrayList<>();
-        keys.add(privKey.toString());
-        String signedTx = eth.signRawTransaction(rawTxHex, keys);
-        System.out.println(signedTx);
+
+        String requestTx = "{\"from\":[{\"address\":\"0x3ffc930c83848cbd72735e1d63bbff46a0d7a560\"}],\"to\":[{\"address\":\"0x3ffc930c83848cbd72735e1d63bbff46a0d7a560\",\"amount\":\"0.1\"}]}";
+        if (eth.validateTx(rawTxHex, requestTx)) {
+            ArrayList<String> keys = new ArrayList<>();
+            keys.add(privKey.toString());
+            String signedTx = eth.signRawTransaction(rawTxHex, keys);
+            System.out.println(signedTx);
+        } else {
+            System.out.println("Invalid transaction!");
+        }
     }
 }

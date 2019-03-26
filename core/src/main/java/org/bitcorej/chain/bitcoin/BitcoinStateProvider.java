@@ -57,6 +57,16 @@ public class BitcoinStateProvider implements ChainState {
         return this.generateKeyPair(new ECKey().getPrivateKeyAsHex());
     }
 
+    @Override
+    public Boolean validateTx(String rawTx, String tx) {
+        return null;
+    }
+
+    @Override
+    public org.bitcorej.chain.Transaction decodeRawTransaction(String rawTx) {
+        return null;
+    }
+
 
     protected Transaction buildTransaction(String json) {
         JSONObject jsonObject = new JSONObject(json);

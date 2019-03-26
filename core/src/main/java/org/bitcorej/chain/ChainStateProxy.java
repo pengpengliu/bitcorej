@@ -53,6 +53,16 @@ public class ChainStateProxy implements ChainState {
     }
 
     @Override
+    public Boolean validateTx(String rawTx, String tx) {
+        return provider.validateTx(rawTx, tx);
+    }
+
+    @Override
+    public Transaction decodeRawTransaction(String rawTx) {
+        return null;
+    }
+
+    @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         return provider.signRawTransaction(rawTx, keys);
     }
