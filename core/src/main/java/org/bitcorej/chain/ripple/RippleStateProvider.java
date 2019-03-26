@@ -10,9 +10,14 @@ import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class RippleStateProvider implements ChainState {
+    private static final BigDecimal DECIMALS = new BigDecimal(10).pow(6);
+
+    private static final BigDecimal MAX_FEE = new BigDecimal("50").multiply(DECIMALS);
+
 //    private String createAddress(PublicKey pubKey) {
 //        byte[] pubKeyData = pubKey.getRaw();
 //
@@ -53,12 +58,20 @@ public class RippleStateProvider implements ChainState {
 
     @Override
     public Boolean validateTx(String rawTx, String tx) {
-        return null;
+        Transaction decodedTx = this.decodeRawTransaction(rawTx);
+        return decodedTx.equals(new Transaction(tx)) && decodedTx.getFee().compareTo(MAX_FEE) < 0;
     }
 
     @Override
     public Transaction decodeRawTransaction(String rawTx) {
-        return null;
+        JSONObject jsonObject = new JSONObject(rawTx);
+
+        Transaction tx = new Transaction();
+        JSONObject amount = jsonObject.getJSONObject("Amount");
+        tx.addInput(tx.new Input(jsonObject.getString("Account"), new BigDecimal(amount.getString("value"))));
+        tx.addOutput(tx.new Output(jsonObject.getString("Destination"), new BigDecimal(amount.getString("value")), jsonObject.getString("DestinationTag")));
+        tx.setFee(new BigDecimal(jsonObject.getString("Fee")).divide(DECIMALS));
+        return tx;
     }
 
     @Override
@@ -76,7 +89,9 @@ public class RippleStateProvider implements ChainState {
         payment.as(Amount.Fee, jsonObject.getString("Fee"));
         SignedTransaction signed = payment.sign(keys.get(0));
         if (signed != null) {
-            return signed.tx_blob;
+            JSONObject packedTx = new JSONObject();
+            packedTx.put("hex", signed.tx_blob);
+            return packedTx.toString();
         }
         return null;
     }

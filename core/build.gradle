@@ -6,11 +6,6 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-}
-
 dependencies {
 //    compile fileTree(dir:'libs',include:['*.jar'])
 

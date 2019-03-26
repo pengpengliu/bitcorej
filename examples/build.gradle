@@ -6,11 +6,6 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation project(':core')
-    implementation 'org.slf4j:slf4j-jdk14:1.7.25'
 }
