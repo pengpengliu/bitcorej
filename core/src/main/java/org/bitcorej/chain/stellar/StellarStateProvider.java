@@ -75,6 +75,8 @@ public class StellarStateProvider implements ChainState {
                 .setTimeout(10 * 1000L)
                 .build();
         transaction.sign(source);
-        return transaction.toEnvelopeXdrBase64();
+        JSONObject packedTx = new JSONObject();
+        packedTx.put("XDR", transaction.toEnvelopeXdrBase64());
+        return packedTx.toString();
     }
 }
