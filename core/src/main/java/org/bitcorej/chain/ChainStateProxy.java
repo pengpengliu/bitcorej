@@ -3,11 +3,16 @@ package org.bitcorej.chain;
 import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.bsv.BSVStateProvider;
+import org.bitcorej.chain.dash.DashStateProvider;
+import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.chain.ltc.LitecoinStateProvider;
+import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
+import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.core.Network;
 
 import java.util.HashMap;
@@ -33,6 +38,16 @@ public class ChainStateProxy implements ChainState {
         services.put("XRP", new RippleStateProvider());
         services.put("XLM_MAIN", new StellarStateProvider(Network.MAIN));
         services.put("XLM_TEST", new StellarStateProvider(Network.TEST));
+        services.put("LTC_MAIN", new LitecoinStateProvider(Network.MAIN));
+        services.put("LTC_TEST", new LitecoinStateProvider(Network.TEST));
+        services.put("DASH_MAIN", new DashStateProvider(Network.MAIN));
+        services.put("DASH_TEST", new DashStateProvider(Network.TEST));
+        services.put("ZEC_MAIN", new ZcashStateProvider(Network.MAIN));
+        services.put("ZEC_TEST", new ZcashStateProvider(Network.TEST));
+        services.put("DOGE_MAIN", new DogecoinStateProvider(Network.MAIN));
+        services.put("DOGE_TEST", new DogecoinStateProvider(Network.TEST));
+        services.put("QTUM_MAIN", new QTUMStateProvider(Network.MAIN));
+        services.put("QTUM_TEST", new QTUMStateProvider(Network.TEST));
     }
 
     private ChainState provider;

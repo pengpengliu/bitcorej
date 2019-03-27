@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class BitcoinStateProvider implements ChainState {
-    private Network network;
-    private NetworkParameters params;
+    protected Network network;
+    protected NetworkParameters params;
 
     public BitcoinStateProvider(Network network) {
         switch (network) {
@@ -49,7 +49,7 @@ public class BitcoinStateProvider implements ChainState {
     @Override
     public KeyPair generateKeyPair(String secret) {
         ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(secret));
-        return new KeyPair(ecKey.getPrivateKeyAsHex(), ecKey.toAddress(this.network.getNetworkParameters()).toString());
+        return new KeyPair(ecKey.getPrivateKeyAsHex(), ecKey.toAddress(this.params).toString());
     }
 
     @Override

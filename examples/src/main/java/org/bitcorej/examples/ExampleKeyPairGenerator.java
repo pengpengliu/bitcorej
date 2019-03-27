@@ -24,7 +24,22 @@ public class ExampleKeyPairGenerator {
         ChainState usdt = new ChainStateProxy("usdt", "test");
         System.out.println(usdt.generateKeyPair());
 
-        ChainState xlm = new ChainStateProxy("xlm");
+        ChainState xlm = new ChainStateProxy("xlm", "test");
         System.out.println(xlm.generateKeyPair());
+
+        ChainState ltc = new ChainStateProxy("ltc", "main");
+        System.out.println(ltc.generateKeyPair());
+
+        ChainState dash = new ChainStateProxy("dash", "main");
+        System.out.println(dash.generateKeyPair());
+
+//        ChainState zec = new ChainStateProxy("zec", "main");
+//        System.out.println(zec.generateKeyPair());
+
+        ChainState doge = new ChainStateProxy("doge", "main");
+        System.out.println(doge.generateKeyPair());
+
+        ChainState qtum = new ChainStateProxy("qtum", "main");
+        System.out.println(qtum.generateKeyPair());
     }
 }
