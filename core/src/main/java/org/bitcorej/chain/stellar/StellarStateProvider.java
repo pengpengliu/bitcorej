@@ -10,12 +10,14 @@ public class StellarStateProvider implements ChainState {
 
     @Override
     public KeyPair generateKeyPair(String secret) {
-        return null;
+        org.stellar.sdk.KeyPair pair = org.stellar.sdk.KeyPair.fromSecretSeed(secret);
+        return new KeyPair(new String(pair.getSecretSeed()), pair.getAccountId());
     }
 
     @Override
     public KeyPair generateKeyPair() {
-        return null;
+        org.stellar.sdk.KeyPair pair = org.stellar.sdk.KeyPair.random();
+        return generateKeyPair(new String(pair.getSecretSeed()));
     }
 
     @Override

@@ -1,10 +1,13 @@
 package org.bitcorej.chain;
 
+import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
+import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
+import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.core.Network;
 
 import java.util.HashMap;
@@ -18,7 +21,12 @@ public class ChainStateProxy implements ChainState {
         services = new HashMap<>();
         services.put("BTC_MAIN", new BitcoinStateProvider(Network.MAIN));
         services.put("BTC_TEST", new BitcoinStateProvider(Network.TEST));
-        services.put("BCH_TEST", new BitcoinStateProvider(Network.TEST));
+        services.put("BCH_MAIN", new BCHStateProvider(Network.MAIN));
+        services.put("BCH_TEST", new BCHStateProvider(Network.TEST));
+        services.put("BSV_MAIN", new BSVStateProvider(Network.MAIN));
+        services.put("BSV_TEST", new BSVStateProvider(Network.TEST));
+        services.put("USDT_MAIN", new USDTStateProvider(Network.MAIN));
+        services.put("USDT_TEST", new USDTStateProvider(Network.TEST));
         services.put("ETH", new EthereumStateProvider());
         services.put("EOS_MAIN", new EOSStateProvider(Network.MAIN));
         services.put("EOS_TEST", new EOSStateProvider(Network.TEST));
