@@ -31,7 +31,8 @@ public class ChainStateProxy implements ChainState {
         services.put("EOS_MAIN", new EOSStateProvider(Network.MAIN));
         services.put("EOS_TEST", new EOSStateProvider(Network.TEST));
         services.put("XRP", new RippleStateProvider());
-        services.put("XLM", new StellarStateProvider());
+        services.put("XLM_MAIN", new StellarStateProvider(Network.MAIN));
+        services.put("XLM_TEST", new StellarStateProvider(Network.TEST));
     }
 
     private ChainState provider;
