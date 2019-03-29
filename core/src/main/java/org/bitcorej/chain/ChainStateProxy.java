@@ -6,6 +6,7 @@ import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.dash.DashStateProvider;
 import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
+import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
@@ -33,6 +34,7 @@ public class ChainStateProxy implements ChainState {
         services.put("USDT_MAIN", new USDTStateProvider(Network.MAIN));
         services.put("USDT_TEST", new USDTStateProvider(Network.TEST));
         services.put("ETH", new EthereumStateProvider());
+        services.put("ERC20", new ERC20StateProvider());
         services.put("EOS_MAIN", new EOSStateProvider(Network.MAIN));
         services.put("EOS_TEST", new EOSStateProvider(Network.TEST));
         services.put("XRP", new RippleStateProvider());
@@ -59,8 +61,15 @@ public class ChainStateProxy implements ChainState {
         }
     }
 
-    public ChainStateProxy(String chain) throws Exception {
-        this.provider = services.get(chain.toUpperCase());
+    public ChainStateProxy(String chain, String...args) throws Exception {
+        if (chain.toUpperCase().equals("ETH") && args.length == 2) {
+            this.provider = services.get("ERC20");
+            ((ERC20StateProvider)this.provider).setAddress(args[0]);
+            ((ERC20StateProvider)this.provider).setDecimals(Integer.parseInt(args[1]));
+        } else {
+            this.provider = services.get(chain.toUpperCase());
+        }
+
         if (this.provider == null) {
             throw new Exception("Chain " + chain + " doesn't have a ChainState registered");
         }
