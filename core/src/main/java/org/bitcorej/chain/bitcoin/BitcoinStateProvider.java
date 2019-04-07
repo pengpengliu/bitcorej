@@ -174,7 +174,9 @@ public class BitcoinStateProvider implements ChainState {
                 input.setScriptSig(ScriptBuilder.createInputScript(txSig, ecKey));
             }
         }
-        
-        return NumericUtil.bytesToHex(tx.bitcoinSerialize());
+
+        JSONObject packedTx = new JSONObject();
+        packedTx.put("raw", NumericUtil.bytesToHex(tx.bitcoinSerialize()));
+        return packedTx.toString();
     }
 }
