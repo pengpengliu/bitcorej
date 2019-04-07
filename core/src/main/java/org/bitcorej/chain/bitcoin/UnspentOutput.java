@@ -1,15 +1,21 @@
 package org.bitcorej.chain.bitcoin;
 
+import org.bitcoinj.core.Address;
+import org.bitcoinj.script.ScriptBuilder;
+import org.bitcorej.utils.NumericUtil;
+
+import java.math.BigDecimal;
+
 public class UnspentOutput {
     private String txId;
     private int vout;
-    private byte[] scriptPubKey;
-    private long amount;
+    private String scriptPubKey;
+    private BigDecimal amount;
 
-    public UnspentOutput(String txId, int vout, byte[] scriptPubKey, long amount) {
+    public UnspentOutput(String txId, int vout, String address, BigDecimal amount) {
         this.txId = txId;
         this.vout = vout;
-        this.scriptPubKey = scriptPubKey;
+        this.scriptPubKey = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
         this.amount = amount;
     }
 
@@ -21,11 +27,11 @@ public class UnspentOutput {
         return vout;
     }
 
-    public byte[] getScriptPubKey() {
+    public String getScriptPubKey() {
         return scriptPubKey;
     }
 
-    public long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 

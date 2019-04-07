@@ -20,6 +20,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class BitcoinStateProvider implements ChainState {
+    private static final BigDecimal DECIMALS = new BigDecimal(10).pow(8);
+    private final static BigDecimal DUST_THRESHOLD = new BigDecimal(2730);
+
     protected Network network;
     protected NetworkParameters params;
 
@@ -67,6 +70,59 @@ public class BitcoinStateProvider implements ChainState {
         return null;
     }
 
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
+        JSONObject encodedTx = new JSONObject();
+
+        BigDecimal totalInputAmount = new BigDecimal(0);
+        JSONArray encodedInputs = new JSONArray();
+        for (int i = 0; i < utxos.size(); i++) {
+            UnspentOutput utxo = utxos.get(i);
+            JSONObject encodedInput = new JSONObject();
+            encodedInput.put("txid", utxo.getTxId());
+            encodedInput.put("vout", utxo.getVout());
+            JSONObject output = new JSONObject();
+            output.put("script", utxo.getScriptPubKey());
+            BigDecimal amount = utxo.getAmount();
+            output.put("amount", amount.toString());
+            totalInputAmount = totalInputAmount.add(amount);
+            encodedInput.put("output", output);
+            encodedInputs.put(encodedInput);
+        }
+
+        BigDecimal totalOutputAmount = new BigDecimal(0);
+        JSONArray encodedOutputs = new JSONArray();
+        for (int i = 0; i < recipients.size(); i++) {
+            Recipient recipient = recipients.get(i);
+            JSONObject encodedOutput = new JSONObject();
+            BigDecimal amount = recipient.getAmount();
+            encodedOutput.put("amount", amount.toString());
+            totalOutputAmount = totalOutputAmount.add(amount);
+            String address = recipient.getAddress();
+            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
+            encodedOutput.put("script", script);
+            encodedOutputs.put(encodedOutput);
+        }
+
+        if (totalInputAmount.compareTo(totalOutputAmount) < 1) {
+            throw new RuntimeException("INSUFFICIENT FUNDS");
+        }
+
+        BigDecimal changeAmount = totalInputAmount.subtract(totalOutputAmount.add(fee));
+
+        if (changeAmount.compareTo(DUST_THRESHOLD.divide(DECIMALS)) > -1) {
+            JSONObject encodedOutput = new JSONObject();
+            encodedOutput.put("amount", changeAmount.toString());
+            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(changeAddress), changeAddress)).getProgram());
+            encodedOutput.put("script", script);
+            encodedOutputs.put(encodedOutput);
+        }
+        encodedTx.put("version", 1);
+        encodedTx.put("inputs", encodedInputs);
+        encodedTx.put("outputs", encodedOutputs);
+
+        encodedTx.put("nLockTime", 0);
+        return encodedTx.toString();
+    }
 
     protected Transaction buildTransaction(String json) {
         JSONObject jsonObject = new JSONObject(json);
