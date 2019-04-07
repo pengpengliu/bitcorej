@@ -176,6 +176,7 @@ public class BitcoinStateProvider implements ChainState {
         }
 
         JSONObject packedTx = new JSONObject();
+        packedTx.put("txid", tx.getHashAsString());
         packedTx.put("raw", NumericUtil.bytesToHex(tx.bitcoinSerialize()));
         return packedTx.toString();
     }
