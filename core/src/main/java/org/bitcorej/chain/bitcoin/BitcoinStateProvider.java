@@ -98,7 +98,7 @@ public class BitcoinStateProvider implements ChainState {
             encodedOutput.put("amount", amount.toString());
             totalOutputAmount = totalOutputAmount.add(amount);
             String address = recipient.getAddress();
-            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
+            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(this.params, address)).getProgram());
             encodedOutput.put("script", script);
             encodedOutputs.put(encodedOutput);
         }
@@ -112,7 +112,7 @@ public class BitcoinStateProvider implements ChainState {
         if (changeAmount.compareTo(DUST_THRESHOLD.divide(DECIMALS)) > -1) {
             JSONObject encodedOutput = new JSONObject();
             encodedOutput.put("amount", changeAmount.toString());
-            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(changeAddress), changeAddress)).getProgram());
+            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(this.params, changeAddress)).getProgram());
             encodedOutput.put("script", script);
             encodedOutputs.put(encodedOutput);
         }
@@ -144,7 +144,7 @@ public class BitcoinStateProvider implements ChainState {
 
     protected String selectPrivateKeys(Script script, List<String> keys) {
         for (int i = 0; i < keys.size(); i++) {
-            if (script.getToAddress(this.params).toString().equals(new PrivateKey(keys.get(i), this.network).toPublicKey().toAddress())) {
+            if (script.getToAddress(this.params).toString().equals(this.generateKeyPair(keys.get(i)).getPublic())) {
                 return keys.get(i);
             }
         }
