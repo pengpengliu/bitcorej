@@ -54,6 +54,10 @@ public class ChainStateProxy implements ChainState {
 
     private ChainState provider;
 
+    public ChainState getProvider() {
+        return provider;
+    }
+
     public ChainStateProxy(String chain, String network) throws Exception {
         this.provider = services.get(chain.toUpperCase() + "_" + network.toUpperCase());
         if (this.provider == null) {
