@@ -10,7 +10,7 @@ public class DashStateProvider extends BitcoinStateProvider {
         super(network);
         switch (network) {
             case MAIN:
-                super.params = DashNetParameters.get();
+                setParams(DashNetParameters.get());
                 break;
             case TEST:
                 super.params = TestNet3Params.get();

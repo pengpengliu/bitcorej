@@ -10,7 +10,7 @@ public class DogecoinStateProvider extends BitcoinStateProvider {
         super(network);
         switch (network) {
             case MAIN:
-                super.params = DogeNetParams.get();
+                setParams(DogeNetParams.get());
                 break;
             case TEST:
                 super.params = TestNet3Params.get();

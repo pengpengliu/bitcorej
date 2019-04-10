@@ -10,7 +10,7 @@ public class LitecoinStateProvider extends BitcoinStateProvider {
         super(network);
         switch (network) {
             case MAIN:
-                super.params = LitecoinNetParameters.get();
+                setParams(LitecoinNetParameters.get());
                 break;
             case TEST:
                 super.params = TestNet3Params.get();

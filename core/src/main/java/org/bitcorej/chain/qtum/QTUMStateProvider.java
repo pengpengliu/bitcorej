@@ -10,7 +10,7 @@ public class QTUMStateProvider extends BitcoinStateProvider {
         super(network);
         switch (network) {
             case MAIN:
-                super.params = QTUMNetParams.get();
+                setParams(QTUMNetParams.get());
                 break;
             case TEST:
                 super.params = TestNet3Params.get();

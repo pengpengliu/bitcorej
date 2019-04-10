@@ -4,6 +4,7 @@ import com.google.common.math.LongMath;
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.MainNetParams;
+import org.bitcoinj.params.Networks;
 import org.bitcoinj.params.RegTestParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.script.Script;
@@ -40,6 +41,11 @@ public class BitcoinStateProvider implements ChainState {
         }
 
         this.network = network;
+    }
+
+    public void setParams(NetworkParameters params) {
+        this.params = params;
+        Networks.register(this.params);
     }
 
     public String calcSegWitAddress(String legacyAddress) {
