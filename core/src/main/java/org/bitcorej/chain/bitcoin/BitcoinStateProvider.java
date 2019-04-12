@@ -103,8 +103,10 @@ public class BitcoinStateProvider implements ChainState {
             BigDecimal amount = recipient.getAmount();
             encodedOutput.put("amount", amount.toString());
             totalOutputAmount = totalOutputAmount.add(amount);
+
             String address = recipient.getAddress();
-            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(this.params, address)).getProgram());
+
+            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
             encodedOutput.put("script", script);
             encodedOutputs.put(encodedOutput);
         }
