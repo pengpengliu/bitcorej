@@ -21,8 +21,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class BitcoinStateProvider implements ChainState {
-    private static final BigDecimal DECIMALS = new BigDecimal(10).pow(8);
-    private final static BigDecimal DUST_THRESHOLD = new BigDecimal(2730);
+    protected static final BigDecimal DECIMALS = new BigDecimal(10).pow(8);
+    protected final static BigDecimal DUST_THRESHOLD = new BigDecimal(2730);
 
     protected Network network;
     protected NetworkParameters params;
@@ -54,6 +54,9 @@ public class BitcoinStateProvider implements ChainState {
         return Address.fromP2SHHash(this.params, Utils.sha256hash160(NumericUtil.hexToBytes(redeemScript))).toBase58();
     }
 
+    public static String generateP2PKHScript(String address) {
+        return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
+    }
 
     @Override
     public KeyPair generateKeyPair(String secret) {
@@ -76,7 +79,7 @@ public class BitcoinStateProvider implements ChainState {
         return null;
     }
 
-    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
+    public static String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
         JSONObject encodedTx = new JSONObject();
 
         BigDecimal totalInputAmount = new BigDecimal(0);
@@ -104,9 +107,7 @@ public class BitcoinStateProvider implements ChainState {
             encodedOutput.put("amount", amount.toString());
             totalOutputAmount = totalOutputAmount.add(amount);
 
-            String address = recipient.getAddress();
-
-            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
+            String script = recipient.getScript();
             encodedOutput.put("script", script);
             encodedOutputs.put(encodedOutput);
         }

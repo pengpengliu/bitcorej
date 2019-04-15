@@ -3,16 +3,16 @@ package org.bitcorej.chain.bitcoin;
 import java.math.BigDecimal;
 
 public class Recipient {
-    private String address;
+    private String script;
     private BigDecimal amount;
 
-    public Recipient(String address, BigDecimal amount) {
-        this.address = address;
+    public Recipient(String script, BigDecimal amount) {
+        this.script = script;
         this.amount = amount;
     }
 
-    public String getAddress() {
-        return address;
+    public String getScript() {
+        return script;
     }
 
     public BigDecimal getAmount() {
