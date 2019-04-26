@@ -9,6 +9,7 @@ sourceCompatibility = 1.8
 dependencies {
 //    compile fileTree(dir:'libs',include:['*.jar'])
 
+    implementation 'commons-codec:commons-codec:1.12'
 //    implementation 'org.bitcoinj:bitcoinj-core:0.14.7'
     implementation 'cash.bitcoinj:bitcoinj-core:0.14.5.2'
     implementation 'org.web3j:crypto:4.1.1'
