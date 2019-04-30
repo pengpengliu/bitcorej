@@ -83,9 +83,8 @@ public class CosmosStateProvider implements ChainState {
 
         byte[] signature = ByteUtil.concat(sig.r.toByteArray(), sig.s.toByteArray());
 
-        String sigBase64 = Base64.encodeBase64String(signature);
+        String sigBase64 = Base64.encodeBase64String(ByteUtil.trimLeadingZeroes(signature));
         String pub = Base64.encodeBase64String(ecKey.getPubKey());
-
         return "{\"tx\":{\"msg\":[{\"type\":\"cosmos-sdk/MsgSend\",\"value\":{\"amount\":[{\"amount\":\"" + toAmount +"\",\"denom\":\"" + toDenom + "\"}],\"from_address\":\"" + from + "\",\"to_address\":\"" + to + "\"}}],\"fee\":{\"amount\":[{\"denom\":\"" + feeDenom + "\",\"amount\":\"" + feeAmount + "\"}],\"gas\":\"" + gas + "\"},\"signatures\":[{\"pub_key\":{\"type\":\"tendermint/PubKeySecp256k1\",\"value\":\"" + pub + "\"},\"signature\":\"" + sigBase64 + "\"}],\"memo\":\"" + memo + "\"},\"mode\":\"block\"}";
     }
 }
