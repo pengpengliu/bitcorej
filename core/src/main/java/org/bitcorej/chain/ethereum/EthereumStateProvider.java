@@ -80,4 +80,17 @@ public class EthereumStateProvider implements ChainState {
         packed.put("raw", Numeric.prependHexPrefix(signedTx));
         return packed.toString();
     }
+
+    public String buildTranscation(String from, String to, BigDecimal amount, int gas, BigDecimal gasPrice, int nonce) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("from", from);
+        jsonObject.put("to", to);
+        jsonObject.put("gas", "0x" + Integer.toHexString(gas));
+        jsonObject.put("gasPrice", "0x" + NumericUtil.bytesToHex(gasPrice.multiply(DECIMALS).toBigInteger().toByteArray()));
+        jsonObject.put("value", "0x" + NumericUtil.bytesToHex(amount.multiply(DECIMALS).toBigInteger().toByteArray()));
+        jsonObject.put("nonce", "0x" + Integer.toHexString(nonce));
+        jsonObject.put("data", "0x");
+        return jsonObject.toString();
+    }
+
 }

@@ -24,6 +24,13 @@ public class ERC20StateProvider extends EthereumStateProvider {
         this.decimals = decimals;
     }
 
+    public ERC20StateProvider() {}
+
+    public ERC20StateProvider(String contractAddress, int decimals) {
+        this.address = contractAddress;
+        this.decimals = decimals;
+    }
+
     @Override
     public Transaction decodeRawTransaction(String rawTx) {
         JSONObject jsonObject = new JSONObject(rawTx);
@@ -67,4 +74,19 @@ public class ERC20StateProvider extends EthereumStateProvider {
         tx.setFee(new BigDecimal(fee).divide(new BigDecimal(10).pow(this.decimals)));
         return tx;
     }
+
+    public String buildTranscation(String from, String to, BigDecimal amount, int gas, BigDecimal gasPrice, int nonce) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("from", from);
+        jsonObject.put("to", address);
+        jsonObject.put("gas", "0x" + Integer.toHexString(gas));
+        jsonObject.put("gasPrice", "0x" + NumericUtil.bytesToHex(gasPrice.multiply(new BigDecimal(10).pow(this.decimals)).toBigInteger().toByteArray()));
+        jsonObject.put("value", "0x0");
+        jsonObject.put("nonce", "0x" + Integer.toHexString(nonce));
+        String amountHex = NumericUtil.bytesToHex(amount.multiply(new BigDecimal(10).pow(this.decimals)).toBigInteger().toByteArray());
+        String amountPrefix = "00000000000000000000000000000000000000000000000000000000";
+        jsonObject.put("data", "0xa9059cbb000000000000000000000000" + NumericUtil.cleanHexPrefix(to) + amountPrefix.substring(amountPrefix.length() - amountHex.length()) + amountHex);
+        return jsonObject.toString();
+    }
+
 }
