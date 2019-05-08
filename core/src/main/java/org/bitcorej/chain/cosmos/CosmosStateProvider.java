@@ -19,6 +19,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class CosmosStateProvider implements ChainState {
+
+    protected String bech32AccAddr;
+    protected String transferPrefix;
+
+    public CosmosStateProvider() {
+        this.bech32AccAddr = "cosmos";
+        this.transferPrefix = "cosmos-sdk/MsgSend";
+    }
+
     @Override
     public KeyPair generateKeyPair(String secret) {
         ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(secret));
@@ -27,12 +36,11 @@ public class CosmosStateProvider implements ChainState {
         hmac.update(publicKey, 0, publicKey.length);
         byte[] hmacBytes = new byte[hmac.getDigestSize()];
         hmac.doFinal(hmacBytes, 0);
-        System.out.println(NumericUtil.bytesToHex(hmacBytes));
         RIPEMD160Digest digest = new RIPEMD160Digest();
         digest.update(hmacBytes, 0, hmacBytes.length);
         byte[] digestBytes = new byte[digest.getDigestSize()];
         digest.doFinal(digestBytes, 0);
-        return new KeyPair(ecKey.getPrivateKeyAsHex(), Bech32.encode("cosmos", Bech32.toWords(digestBytes)));
+        return new KeyPair(ecKey.getPrivateKeyAsHex(), Bech32.encode(this.bech32AccAddr, Bech32.toWords(digestBytes)));
     }
 
     @Override
@@ -65,7 +73,7 @@ public class CosmosStateProvider implements ChainState {
         String toDenom = jsonObject.getJSONObject("msg").getJSONArray("coins").getJSONObject(0).getString("denom");
         String toAmount = jsonObject.getJSONObject("msg").getJSONArray("coins").getJSONObject(0).getString("amount");
 
-        String msg = "{\"account_number\":\"" + accountNumber + "\",\"chain_id\":\"" + chainId + "\",\"fee\":{\"amount\":[{\"amount\":\"" + feeAmount + "\",\"denom\":\"" + feeDenom + "\"}],\"gas\":\"" + gas + "\"},\"memo\":\"" + memo + "\",\"msgs\":[{\"type\":\"cosmos-sdk/MsgSend\",\"value\":{\"amount\":[{\"amount\":\"" + toAmount + "\",\"denom\":\"" + toDenom + "\"}],\"from_address\":\"" + from + "\",\"to_address\":\"" + to + "\"}}],\"sequence\":\"" + sequence + "\"}";
+        String msg = "{\"account_number\":\"" + accountNumber + "\",\"chain_id\":\"" + chainId + "\",\"fee\":{\"amount\":[{\"amount\":\"" + feeAmount + "\",\"denom\":\"" + feeDenom + "\"}],\"gas\":\"" + gas + "\"},\"memo\":\"" + memo + "\",\"msgs\":[{\"type\":\"" + this.transferPrefix + "\",\"value\":{\"amount\":[{\"amount\":\"" + toAmount + "\",\"denom\":\"" + toDenom + "\"}],\"from_address\":\"" + from + "\",\"to_address\":\"" + to + "\"}}],\"sequence\":\"" + sequence + "\"}";
 
         MessageDigest digest = null;
         try {
@@ -85,6 +93,6 @@ public class CosmosStateProvider implements ChainState {
 
         String sigBase64 = Base64.encodeBase64String(ByteUtil.trimLeadingZeroes(signature));
         String pub = Base64.encodeBase64String(ecKey.getPubKey());
-        return "{\"tx\":{\"msg\":[{\"type\":\"cosmos-sdk/MsgSend\",\"value\":{\"amount\":[{\"amount\":\"" + toAmount +"\",\"denom\":\"" + toDenom + "\"}],\"from_address\":\"" + from + "\",\"to_address\":\"" + to + "\"}}],\"fee\":{\"amount\":[{\"denom\":\"" + feeDenom + "\",\"amount\":\"" + feeAmount + "\"}],\"gas\":\"" + gas + "\"},\"signatures\":[{\"pub_key\":{\"type\":\"tendermint/PubKeySecp256k1\",\"value\":\"" + pub + "\"},\"signature\":\"" + sigBase64 + "\"}],\"memo\":\"" + memo + "\"},\"mode\":\"block\"}";
+        return "{\"tx\":{\"msg\":[{\"type\":\"" + this.transferPrefix + "\",\"value\":{\"amount\":[{\"amount\":\"" + toAmount +"\",\"denom\":\"" + toDenom + "\"}],\"from_address\":\"" + from + "\",\"to_address\":\"" + to + "\"}}],\"fee\":{\"amount\":[{\"denom\":\"" + feeDenom + "\",\"amount\":\"" + feeAmount + "\"}],\"gas\":\"" + gas + "\"},\"signatures\":[{\"pub_key\":{\"type\":\"tendermint/PubKeySecp256k1\",\"value\":\"" + pub + "\"},\"signature\":\"" + sigBase64 + "\"}],\"memo\":\"" + memo + "\"},\"mode\":\"block\"}";
     }
 }

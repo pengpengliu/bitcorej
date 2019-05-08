@@ -3,11 +3,13 @@ package org.bitcorej.chain;
 import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.bsv.BSVStateProvider;
+import org.bitcorej.chain.cosmos.CosmosStateProvider;
 import org.bitcorej.chain.dash.DashStateProvider;
 import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
@@ -50,6 +52,8 @@ public class ChainStateProxy implements ChainState {
         services.put("DOGE_TEST", new DogecoinStateProvider(Network.TEST));
         services.put("QTUM_MAIN", new QTUMStateProvider(Network.MAIN));
         services.put("QTUM_TEST", new QTUMStateProvider(Network.TEST));
+        services.put("ATOM", new CosmosStateProvider());
+        services.put("IRIS", new IRISStateProvider());
     }
 
     private ChainState provider;
