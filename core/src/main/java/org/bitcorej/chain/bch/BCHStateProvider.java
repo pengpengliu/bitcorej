@@ -9,6 +9,7 @@ import org.bitcorej.core.Network;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class BCHStateProvider extends BitcoinStateProvider {
@@ -17,18 +18,10 @@ public class BCHStateProvider extends BitcoinStateProvider {
     }
 
     @Override
-    public Boolean validateTx(String rawTx, String tx) {
-        return null;
-    }
-
-    @Override
-    public org.bitcorej.chain.Transaction decodeRawTransaction(String rawTx) {
-        return null;
-    }
-
-    @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         Transaction tx = super.buildTransaction(rawTx);
+
+        JSONObject decodedTx = new JSONObject(rawTx);
 
         List<TransactionInput> inputs = tx.getInputs();
 
@@ -39,7 +32,10 @@ public class BCHStateProvider extends BitcoinStateProvider {
 
             ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(this.selectPrivateKeys(scriptPubKey, keys)));
 
-            Sha256Hash hash = tx.hashForSignatureWitness(i, scriptPubKey, Coin.valueOf(52005704l), Transaction.SigHash.ALL, false);
+            String amountStr = decodedTx.getJSONArray("inputs").getJSONObject(i).getJSONObject("output").getString("amount");
+            Long amount = new BigDecimal(amountStr).multiply(DECIMALS).longValue();
+
+            Sha256Hash hash = tx.hashForSignatureWitness(i, scriptPubKey, Coin.valueOf(amount), Transaction.SigHash.ALL, false);
             ECKey.ECDSASignature ecSig = ecKey.sign(hash);
             TransactionSignature txSig = new TransactionSignature(ecSig, Transaction.SigHash.ALL, false, true);
 
