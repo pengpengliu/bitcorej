@@ -7,6 +7,7 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.NumericUtil;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -53,7 +54,9 @@ public class BCHStateProvider extends BitcoinStateProvider {
 
             // tx.addSignedInput(input.getOutpoint(), scriptPubKey, ecKey, Transaction.SigHash.ALL,false, true);
         }
-
-        return NumericUtil.bytesToHex(tx.bitcoinSerialize());
+        JSONObject packedTx = new JSONObject();
+        packedTx.put("txid", tx.getHashAsString());
+        packedTx.put("raw", NumericUtil.bytesToHex(tx.bitcoinSerialize()));
+        return packedTx.toString();
     }
 }
