@@ -1,6 +1,5 @@
 package org.bitcorej.chain.dogecoin;
 
-import org.bitcoinj.params.TestNet3Params;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.core.Network;
 
@@ -13,7 +12,7 @@ public class DogecoinStateProvider extends BitcoinStateProvider {
                 setParams(DogeNetParams.get());
                 break;
             case TEST:
-                super.params = TestNet3Params.get();
+                super.params = DogeTestNetParams.get();
                 break;
             default:
                 super.params = DogeNetParams.get();
