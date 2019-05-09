@@ -11,6 +11,7 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
+import org.bitcorej.chain.bch.AddressConverter;
 import org.bitcorej.core.Network;
 import org.bitcorej.core.PrivateKey;
 import org.bitcorej.utils.NumericUtil;
@@ -55,6 +56,9 @@ public class BitcoinStateProvider implements ChainState {
     }
 
     public static String generateP2PKHScript(String address) {
+        if (address.matches("^(bitcoincash:)?(q|p)[a-z0-9]{41}")) {
+            address = AddressConverter.toLegacyAddress(address);
+        }
         return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
     }
 

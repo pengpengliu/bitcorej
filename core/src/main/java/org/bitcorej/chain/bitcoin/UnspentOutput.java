@@ -2,6 +2,7 @@ package org.bitcorej.chain.bitcoin;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.script.ScriptBuilder;
+import org.bitcorej.chain.bch.AddressConverter;
 import org.bitcorej.utils.NumericUtil;
 
 import java.math.BigDecimal;
@@ -13,6 +14,9 @@ public class UnspentOutput {
     private BigDecimal amount;
 
     public UnspentOutput(String txId, int vout, String address, BigDecimal amount) {
+        if (address.matches("^(bitcoincash:)?(q|p)[a-z0-9]{41}")) {
+            address = AddressConverter.toLegacyAddress(address);
+        }
         this.txId = txId;
         this.vout = vout;
         this.scriptPubKey = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
