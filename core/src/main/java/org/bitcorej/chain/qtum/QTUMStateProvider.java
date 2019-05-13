@@ -1,6 +1,5 @@
 package org.bitcorej.chain.qtum;
 
-import org.bitcoinj.params.TestNet3Params;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.core.Network;
 
@@ -13,7 +12,7 @@ public class QTUMStateProvider extends BitcoinStateProvider {
                 setParams(QTUMNetParams.get());
                 break;
             case TEST:
-                super.params = TestNet3Params.get();
+                setParams(QTUMTestNetParams.get());
                 break;
             default:
                 super.params = QTUMNetParams.get();
