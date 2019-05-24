@@ -11,6 +11,7 @@ import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
+import org.bitcorej.chain.nas.NASStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
@@ -54,6 +55,7 @@ public class ChainStateProxy implements ChainState {
         services.put("QTUM_TEST", new QTUMStateProvider(Network.TEST));
         services.put("ATOM", new CosmosStateProvider());
         services.put("IRIS", new IRISStateProvider());
+        services.put("NAS", new NASStateProvider());
     }
 
     private ChainState provider;
