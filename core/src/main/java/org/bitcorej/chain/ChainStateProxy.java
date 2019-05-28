@@ -12,6 +12,7 @@ import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
+import org.bitcorej.chain.ong.ONGStateProvider;
 import org.bitcorej.chain.ont.ONTStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
@@ -58,6 +59,7 @@ public class ChainStateProxy implements ChainState {
         services.put("IRIS", new IRISStateProvider());
         services.put("NAS", new NASStateProvider());
         services.put("ONT", new ONTStateProvider());
+        services.put("ONG", new ONGStateProvider());
     }
 
     private ChainState provider;
