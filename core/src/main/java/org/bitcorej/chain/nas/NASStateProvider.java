@@ -64,7 +64,8 @@ public class NASStateProvider implements ChainState {
             ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(keys.get(0)));
             signature.initSign(Crypto.NewPrivateKey(Algorithm.SECP256K1, ecKey.getPrivKeyBytes()));
             tx.sign(signature);
-            return Base64.toBase64String(tx.toProto());
+            String signedTx = Base64.toBase64String(tx.toProto());
+            return "{\"data\":\""+ signedTx +"\"}";
         } catch (Exception e) {
             e.printStackTrace();
         }
