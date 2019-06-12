@@ -1,6 +1,7 @@
 package org.bitcorej.chain;
 
 import org.bitcorej.chain.bch.BCHStateProvider;
+import org.bitcorej.chain.bhd.BHDStateProvider;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.cosmos.CosmosStateProvider;
@@ -60,6 +61,9 @@ public class ChainStateProxy implements ChainState {
         services.put("NAS", new NASStateProvider());
         services.put("ONT", new ONTStateProvider());
         services.put("ONG", new ONGStateProvider());
+        services.put("BHD", new BHDStateProvider(Network.MAIN));
+        services.put("BHD_MAIN", new BHDStateProvider(Network.MAIN));
+        services.put("BHD_TEST", new BHDStateProvider(Network.TEST));
     }
 
     private ChainState provider;
