@@ -10,6 +10,8 @@ import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.chain.gxc.GXCStateProvider;
+import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
@@ -20,7 +22,6 @@ import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
-import org.bitcorej.chain.vet.VETERC20StateProvider;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.core.Network;
 
@@ -90,9 +91,6 @@ public class ChainStateProxy implements ChainState {
             this.provider = services.get("ERC20");
             ((ERC20StateProvider)this.provider).setAddress(args[0]);
             ((ERC20StateProvider)this.provider).setDecimals(Integer.parseInt(args[1]));
-        } else if (chain.toUpperCase().equals("VET") && args.length == 3) {
-            this.provider = services.get("VETERC20");
-            ((VETERC20StateProvider)this.provider).setProperties(args[0], args[1], Integer.parseInt(args[2]));
         } else {
             this.provider = services.get(chain.toUpperCase());
         }

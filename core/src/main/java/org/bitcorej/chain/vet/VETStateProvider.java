@@ -23,7 +23,6 @@ public class VETStateProvider implements ChainState {
     protected AbstractToken token;
 
     public VETStateProvider(Network network) {
-        token = AbstractToken.VET;
         switch (network) {
             case MAIN:
                 chainTag = 74;
@@ -60,6 +59,13 @@ public class VETStateProvider implements ChainState {
     public String signRawTransaction(String rawTx, List<String> keys) {
         JSONObject json = new JSONObject(rawTx);
 
+        if (json.has("token")) {
+            JSONObject token = json.getJSONObject("token");
+            this.token = ERC20Token.create(token.getString("name"), Address.fromHexString(token.getString("address")), token.getInt("unit"));
+        } else {
+            this.token = AbstractToken.VET;
+        }
+
         byte chainTag = this.chainTag;
         byte[] blockRef = NumericUtil.hexToBytes(json.getString("blockRef"));
 
@@ -67,7 +73,15 @@ public class VETStateProvider implements ChainState {
         amount.setDecimalAmount(json.getString("amount"));
 
         String toAddress = json.getString("to");
-        ToClause clause = new ToClause(Address.fromHexString(toAddress), amount, ToData.ZERO);
+        ToClause clause;
+        if (json.has("token")) {
+            clause = ERC20Contract.buildTranferToClause(
+                    (ERC20Token) this.token,
+                    Address.fromHexString(toAddress),
+                    amount);
+        } else {
+            clause = new ToClause(Address.fromHexString(toAddress), amount, ToData.ZERO);
+        }
         RawTransaction rawTransaction = RawTransactionFactory.getInstance().createRawTransaction(chainTag, blockRef, 720, 60000, (byte) 0x0, CryptoUtils.generateTxNonce(), clause);
 
         // sign tx
