@@ -13,6 +13,7 @@ import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.NumericUtil;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -69,20 +70,28 @@ public class VETStateProvider implements ChainState {
         byte chainTag = this.chainTag;
         byte[] blockRef = NumericUtil.hexToBytes(json.getString("blockRef"));
 
-        Amount amount = Amount.createFromToken(this.token);
-        amount.setDecimalAmount(json.getString("amount"));
-
-        String toAddress = json.getString("to");
-        ToClause clause;
-        if (json.has("token")) {
-            clause = ERC20Contract.buildTranferToClause(
-                    (ERC20Token) this.token,
-                    Address.fromHexString(toAddress),
-                    amount);
-        } else {
-            clause = new ToClause(Address.fromHexString(toAddress), amount, ToData.ZERO);
+        JSONArray to = json.getJSONArray("to");
+        ToClause[] toClauses = new ToClause[to.length()];
+        int gas = 5000;
+        for (int i = 0; i < to.length(); i++) {
+            JSONObject recipient = to.getJSONObject(i);
+            String toAddress = recipient.getString("address");
+            Amount amount = Amount.createFromToken(this.token);
+            amount.setDecimalAmount(recipient.getString("amount"));
+            ToClause clause;
+            if (json.has("token")) {
+                gas += 31518;
+                clause = ERC20Contract.buildTranferToClause(
+                        (ERC20Token) this.token,
+                        Address.fromHexString(toAddress),
+                        amount);
+            } else {
+                gas += 16000;
+                clause = new ToClause(Address.fromHexString(toAddress), amount, ToData.ZERO);
+            }
+            toClauses[i] = clause;
         }
-        RawTransaction rawTransaction = RawTransactionFactory.getInstance().createRawTransaction(chainTag, blockRef, 720, 60000, (byte) 0x0, CryptoUtils.generateTxNonce(), clause);
+        RawTransaction rawTransaction = RawTransactionFactory.getInstance().createRawTransaction(chainTag, blockRef, 720, gas, (byte) 0x0, CryptoUtils.generateTxNonce(), toClauses);
 
         // sign tx
         ECDSASign.SignatureData signature = ECDSASign.signMessage(rawTransaction.encode(), ECKeyPair.create(keys.get(0)), true);
