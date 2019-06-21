@@ -80,7 +80,8 @@ public class VETStateProvider implements ChainState {
             amount.setDecimalAmount(recipient.getString("amount"));
             ToClause clause;
             if (json.has("token")) {
-                gas += 31518;
+                // TODO
+                gas += 75000;
                 clause = ERC20Contract.buildTranferToClause(
                         (ERC20Token) this.token,
                         Address.fromHexString(toAddress),
