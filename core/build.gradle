@@ -28,6 +28,7 @@ dependencies {
     implementation 'com.github.stellar:java-stellar-sdk:0.6.0'
     implementation 'io.nebulas:nebulas:0.2'
     implementation 'com.github.pengpengliu:ontology-java-sdk:v1.0.12'
+    implementation 'com.github.pengpengliu:iost:3.0.7'
     implementation 'com.github.pengpengliu:thor-client-sdk4j:0.0.8'
     testImplementation 'junit:junit:4.12'
 }
