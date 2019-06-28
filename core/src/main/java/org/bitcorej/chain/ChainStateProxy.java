@@ -10,6 +10,7 @@ import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
@@ -68,6 +69,7 @@ public class ChainStateProxy implements ChainState {
         services.put("VET", new VETStateProvider(Network.MAIN));
         services.put("VET_MAIN", new VETStateProvider(Network.MAIN));
         services.put("VET_TEST", new VETStateProvider(Network.TEST));
+        services.put("IOST", new IOSTStateProvider());
     }
 
     private ChainState provider;
