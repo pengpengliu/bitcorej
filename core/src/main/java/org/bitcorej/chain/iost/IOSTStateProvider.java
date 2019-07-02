@@ -57,12 +57,9 @@ public class IOSTStateProvider implements ChainState {
             assert actions.get(0).contract.equals("token.iost");
             assert actions.get(0).action_name.equals("transfer");
 
-
             GsonBuilder gb = new GsonBuilder();
             gb.registerTypeAdapter(Signature.class, new SignatureAdapter());
-            System.out.println(gb.create().toJson(tx));
-
-            // System.out.println(client.sendTx(tx));
+            return gb.create().toJson(tx);
         } catch (IOException e) {
             e.printStackTrace();
         }
