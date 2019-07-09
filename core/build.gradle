@@ -30,5 +30,6 @@ dependencies {
     implementation 'com.github.pengpengliu:ontology-java-sdk:v1.0.12'
     implementation 'com.github.pengpengliu:iost:3.0.7'
     implementation 'com.github.pengpengliu:thor-client-sdk4j:0.0.8'
+    implementation 'org.whispersystems:curve25519-java:0.5.0'
     testImplementation 'junit:junit:4.12'
 }
