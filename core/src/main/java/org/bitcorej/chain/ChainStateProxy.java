@@ -21,6 +21,7 @@ import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
+import org.bitcorej.chain.vsys.VSYSStateProvider;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.core.Network;
 
@@ -70,6 +71,9 @@ public class ChainStateProxy implements ChainState {
         services.put("VET_MAIN", new VETStateProvider(Network.MAIN));
         services.put("VET_TEST", new VETStateProvider(Network.TEST));
         services.put("IOST", new IOSTStateProvider());
+        services.put("VSYS", new VSYSStateProvider());
+        services.put("VSYS_MAIN", new VSYSStateProvider(Network.MAIN));
+        services.put("VSYS_TEST", new VSYSStateProvider(Network.TEST));
     }
 
     private ChainState provider;
