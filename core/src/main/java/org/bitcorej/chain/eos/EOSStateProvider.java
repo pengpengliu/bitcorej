@@ -45,7 +45,7 @@ public class EOSStateProvider implements ChainState {
     public KeyPair generateKeyPair(String secret) {
         EOSKey eosKey = EOSKey.fromWIF(secret);
 
-        return new KeyPair(eosKey.getPublicKeyAsHex(), secret);
+        return new KeyPair(secret, eosKey.getPublicKeyAsHex());
     }
 
     @Override
