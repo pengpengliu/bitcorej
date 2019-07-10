@@ -57,10 +57,12 @@ public class RippleStateProvider implements ChainState {
         Payment payment = new Payment();
 
         JSONObject jsonObject = new JSONObject(rawTx);
-
+        String memo = jsonObject.getString("DestinationTag");
         payment.as(AccountID.Account, jsonObject.getString("Account"));
         payment.as(AccountID.Destination, jsonObject.getString("Destination"));
-        payment.as(UInt32.DestinationTag, jsonObject.getString("DestinationTag"));
+        if (!memo.equals("")) {
+            payment.as(UInt32.DestinationTag, jsonObject.getString("DestinationTag"));
+        }
         payment.as(Amount.Amount, new BigDecimal(jsonObject.getJSONObject("Amount").getString("value")).multiply(DECIMALS).toString());
         payment.as(UInt32.Sequence, jsonObject.getInt("Sequence"));
         payment.as(UInt32.LastLedgerSequence, jsonObject.getInt("LastLedgerSequence"));
