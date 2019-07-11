@@ -12,6 +12,7 @@ import org.bitcorej.chain.Transaction;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -63,7 +64,9 @@ public class RippleStateProvider implements ChainState {
         if (!memo.equals("")) {
             payment.as(UInt32.DestinationTag, jsonObject.getString("DestinationTag"));
         }
-        payment.as(Amount.Amount, new BigDecimal(jsonObject.getJSONObject("Amount").getString("value")).multiply(DECIMALS).toString());
+
+        BigDecimal amount = new BigDecimal(jsonObject.getJSONObject("Amount").getString("value")).multiply(DECIMALS);
+        payment.as(Amount.Amount, amount.toBigInteger().toString());
         payment.as(UInt32.Sequence, jsonObject.getInt("Sequence"));
         payment.as(UInt32.LastLedgerSequence, jsonObject.getInt("LastLedgerSequence"));
         payment.as(Amount.Fee, jsonObject.getString("Fee"));
