@@ -17,6 +17,10 @@ public class StellarStateProvider implements ChainState {
     private org.bitcorej.core.Network network;
 
     public StellarStateProvider(org.bitcorej.core.Network network) {
+        this.network = network;
+    }
+
+    private void switchNetwork() {
         switch (network) {
             case MAIN:
                 Network.usePublicNetwork();
@@ -25,8 +29,6 @@ public class StellarStateProvider implements ChainState {
                 Network.useTestNetwork();
                 break;
         }
-
-        this.network = network;
     }
 
     @Override
@@ -62,15 +64,27 @@ public class StellarStateProvider implements ChainState {
 
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
+        switchNetwork();
         JSONObject jsonObject = new JSONObject(rawTx);
         String to = jsonObject.getString("to");
+        String type = jsonObject.getString("type");
         Long sequence = Long.parseLong(jsonObject.getString("sequence"));
+        int fee = jsonObject.getInt("fee");
         String memo = jsonObject.getString("memo");
         BigDecimal amount = new BigDecimal(jsonObject.getString("amount"));
         org.stellar.sdk.KeyPair source = org.stellar.sdk.KeyPair.fromSecretSeed(keys.get(0));
         org.stellar.sdk.KeyPair destination = org.stellar.sdk.KeyPair.fromAccountId(to);
+        Operation op;
+        if (type.equals("payment")) {
+            op = new PaymentOperation.Builder(destination, new AssetTypeNative(), amount.toString()).build();
+        } else if (type.equals("create_account")) {
+            op = new CreateAccountOperation.Builder(destination, amount.toString()).build();
+        } else {
+            throw new RuntimeException("no sup op");
+        }
         org.stellar.sdk.Transaction transaction = new org.stellar.sdk.Transaction.Builder(new Account(source, sequence))
-                .addOperation(new PaymentOperation.Builder(destination, new AssetTypeNative(), amount.toString()).build())
+                .addOperation(op)
+                .setOperationFee(fee)
                 .addMemo(Memo.text(memo))
                 .setTimeout(10 * 1000L)
                 .build();
