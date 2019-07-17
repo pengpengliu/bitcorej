@@ -2,7 +2,6 @@ package org.bitcorej.chain.eos;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.eblock.eos4j.Ecc;
-import io.eblock.eos4j.OfflineSign;
 import io.eblock.eos4j.api.vo.transaction.push.Tx;
 import io.eblock.eos4j.api.vo.transaction.push.TxAction;
 import io.eblock.eos4j.api.vo.transaction.push.TxRequest;
@@ -80,6 +79,12 @@ public class EOSStateProvider implements ChainState {
         return tx;
     }
 
+    public String pushTransaction(String compression, Tx pushTransaction, String[] signatures) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String mapJakcson = mapper.writeValueAsString(new TxRequest(compression, pushTransaction, signatures));
+        return mapJakcson;
+    }
+
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         JSONObject jsonObject = new JSONObject(rawTx);
@@ -114,7 +119,7 @@ public class EOSStateProvider implements ChainState {
             actions.add(action);
         }
         tx.setActions(actions);
-        // sgin
+        // sign
         String sign = Ecc.signTransaction(keys.get(0), new TxSign(this.chainId, tx));
         for (int i = 0; i < actionsJsonArray.length(); i++) {
             JSONObject args = actionsJsonArray.getJSONObject(i).getJSONObject("args");
@@ -126,11 +131,8 @@ public class EOSStateProvider implements ChainState {
         // reset expiration
         tx.setExpiration(dateFormatter.format(new Date(1000 * Long.parseLong(tx.getExpiration().toString()))));
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            String mapJakcson = mapper.writeValueAsString(tx);
-            JSONObject packedTx = new JSONObject(mapJakcson);
-            packedTx.put("signatures", new String[] { sign });
-            return packedTx.toString();
+            String packedTx = this.pushTransaction("none", tx, new String[] { sign });
+            return packedTx;
         } catch (Exception e) {
             e.printStackTrace();
         }
