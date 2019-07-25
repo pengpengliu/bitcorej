@@ -16,6 +16,7 @@ import org.bitcorej.chain.ltc.LitecoinStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
 import org.bitcorej.chain.ong.ONGStateProvider;
 import org.bitcorej.chain.ont.ONTStateProvider;
+import org.bitcorej.chain.pi.PIStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
@@ -74,6 +75,9 @@ public class ChainStateProxy implements ChainState {
         services.put("VSYS", new VSYSStateProvider());
         services.put("VSYS_MAIN", new VSYSStateProvider(Network.MAIN));
         services.put("VSYS_TEST", new VSYSStateProvider(Network.TEST));
+        PIStateProvider pi = new PIStateProvider();
+        services.put("PI", pi);
+        services.put("PI_MAIN", pi);
     }
 
     private ChainState provider;
