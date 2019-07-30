@@ -10,6 +10,7 @@ import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
@@ -78,6 +79,7 @@ public class ChainStateProxy implements ChainState {
         PIStateProvider pi = new PIStateProvider();
         services.put("PI", pi);
         services.put("PI_MAIN", pi);
+        services.put("GXC", new GXCStateProvider());
     }
 
     private ChainState provider;
