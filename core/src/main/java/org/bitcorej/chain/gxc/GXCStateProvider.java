@@ -8,7 +8,7 @@ import org.bitcoinj.core.ECKey;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
-import org.bitcorej.chain.trx.crypto.Hash;
+import org.bitcorej.crypto.Hash;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -153,7 +153,7 @@ public class GXCStateProvider implements ChainState {
             byteArray.addAll(Bytes.asList(NumericUtil.hexToBytes(chainId)));
             byteArray.addAll(Bytes.asList(NumericUtil.hexToBytes(serialized)));
 
-            String txid = NumericUtil.bytesToHex(BitUtils.copyOfRange(Sha256.from(NumericUtil.hexToBytes(serialized)).getBytes(), 0, 20));
+            String txid = NumericUtil.bytesToHex(BitUtils.copyOfRange(Hash.sha256(NumericUtil.hexToBytes(serialized)), 0, 20));
 
             byte[] signature = Crypto.signature(Bytes.toArray(byteArray), ecKey);
             JSONArray signatures = new JSONArray();
