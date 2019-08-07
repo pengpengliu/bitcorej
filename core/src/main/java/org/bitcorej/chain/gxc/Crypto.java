@@ -49,7 +49,6 @@ public class Crypto {
     public static byte[] signature(byte[] data, ECKey ecKey) {
         GxcPrivateKey gxcPrivateKey = new GxcPrivateKey(WIF.fromPrivateKey(ecKey.getPrivateKeyAsHex()).toString());
         Sha256 msg = Sha256.from(data);
-        System.out.println(NumericUtil.bytesToHex(msg.getBytes()));
         return gxcPrivateKey.sign(msg).encoding(true);
     }
 }
