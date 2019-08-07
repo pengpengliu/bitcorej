@@ -21,6 +21,8 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.bitcoinj.script.ScriptOpCodes.*;
+
 public class BitcoinStateProvider implements ChainState {
     protected static final BigDecimal DECIMALS = new BigDecimal(10).pow(8);
     protected final static BigDecimal DUST_THRESHOLD = new BigDecimal(2730);
@@ -56,6 +58,21 @@ public class BitcoinStateProvider implements ChainState {
     }
 
     public static String generateP2PKHScript(String address) {
+        // Zcash
+        if (address.matches("^t1[a-zA-Z0-9]{33}$")) {
+            byte[] versionAndDataBytes = Base58.decodeChecked(address);
+            byte[] bytes = new byte[versionAndDataBytes.length - 2];
+            System.arraycopy(versionAndDataBytes, 2, bytes, 0, versionAndDataBytes.length - 2);
+            Script script = new ScriptBuilder()
+                    .op(OP_DUP)
+                    .op(OP_HASH160)
+                    .data(bytes)
+                    .op(OP_EQUALVERIFY)
+                    .op(OP_CHECKSIG)
+                    .build();
+            return NumericUtil.bytesToHex(script.getProgram());
+        }
+        // Bitcoin Cash
         if (address.matches("^(bitcoincash:)?(q|p)[a-z0-9]{41}")) {
             address = AddressConverter.toLegacyAddress(address);
         }
