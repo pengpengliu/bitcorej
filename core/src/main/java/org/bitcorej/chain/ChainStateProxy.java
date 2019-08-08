@@ -21,6 +21,7 @@ import org.bitcorej.chain.pi.PIStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
+import org.bitcorej.chain.trx.TRXStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
 import org.bitcorej.chain.vsys.VSYSStateProvider;
@@ -80,6 +81,9 @@ public class ChainStateProxy implements ChainState {
         services.put("PI", pi);
         services.put("PI_MAIN", pi);
         services.put("GXC", new GXCStateProvider());
+        TRXStateProvider trx = new TRXStateProvider();
+        services.put("TRX", trx);
+        services.put("BTT", trx);
     }
 
     private ChainState provider;
