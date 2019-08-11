@@ -25,7 +25,11 @@ import java.util.*;
 public class EOSStateProvider implements ChainState {
 
     private Network network;
-    private String chainId;
+    protected String chainId;
+
+    public EOSStateProvider() {
+        chainId = "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906";
+    }
 
     public EOSStateProvider(Network network) {
         switch (network) {
@@ -44,7 +48,7 @@ public class EOSStateProvider implements ChainState {
     public KeyPair generateKeyPair(String secret) {
         EOSKey eosKey = EOSKey.fromWIF(secret);
 
-        return new KeyPair(secret, eosKey.getPublicKeyAsHex());
+        return new KeyPair(secret, eosKey.getPublicKeyAsHex("EOS"));
     }
 
     @Override

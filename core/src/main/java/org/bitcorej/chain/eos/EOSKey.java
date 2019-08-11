@@ -32,7 +32,7 @@ public class EOSKey extends VersionedChecksummedBytes {
         return new EOSKey(128, prvKey).getPublicKeyAsHex();
     }
 
-    public String getPublicKeyAsHex() {
+    public String getPublicKeyAsHex(String prefix) {
         ECKey ecKey = ECKey.fromPrivate(bytes);
         byte[] pubKeyData = ecKey.getPubKey();
         RIPEMD160Digest digest = new RIPEMD160Digest();
@@ -42,7 +42,11 @@ public class EOSKey extends VersionedChecksummedBytes {
         byte[] checksumBytes = Arrays.copyOfRange(out, 0, 4);
 
         pubKeyData = ByteUtil.concat(pubKeyData, checksumBytes);
-        return "EOS" + Base58.encode(pubKeyData);
+        return prefix + Base58.encode(pubKeyData);
+    }
+
+    public String getPublicKeyAsHex() {
+        return this.getPublicKeyAsHex("EOS");
     }
 
     public byte[] getPrivateKey() {
