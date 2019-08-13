@@ -15,6 +15,7 @@ import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
+import org.bitcorej.chain.naka.NAKAStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
 import org.bitcorej.chain.ong.ONGStateProvider;
 import org.bitcorej.chain.ont.ONTStateProvider;
@@ -82,6 +83,7 @@ public class ChainStateProxy implements ChainState {
         PIStateProvider pi = new PIStateProvider();
         services.put("PI", pi);
         services.put("PI_MAIN", pi);
+        services.put("NAKA", new NAKAStateProvider());
         services.put("GXC", new GXCStateProvider());
         TRXStateProvider trx = new TRXStateProvider();
         services.put("TRX", trx);
