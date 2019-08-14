@@ -142,7 +142,8 @@ public class BitcoinStateProvider implements ChainState {
         if (changeAmount.compareTo(DUST_THRESHOLD.divide(DECIMALS)) > -1) {
             JSONObject encodedOutput = new JSONObject();
             encodedOutput.put("amount", changeAmount.toString());
-            String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(changeAddress), changeAddress)).getProgram());
+            String script = BitcoinStateProvider.generateP2PKHScript(changeAddress);
+            // String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(changeAddress), changeAddress)).getProgram());
             encodedOutput.put("script", script);
             encodedOutputs.put(encodedOutput);
         }
