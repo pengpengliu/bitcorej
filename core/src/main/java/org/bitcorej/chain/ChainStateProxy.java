@@ -2,6 +2,7 @@ package org.bitcorej.chain;
 
 import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bhd.BHDStateProvider;
+import org.bitcorej.chain.binance.BinanceStateProvider;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.cosmos.CosmosStateProvider;
@@ -88,6 +89,7 @@ public class ChainStateProxy implements ChainState {
         TRXStateProvider trx = new TRXStateProvider();
         services.put("TRX", trx);
         services.put("BTT", trx);
+        services.put("BNB", new BinanceStateProvider());
     }
 
     private ChainState provider;
