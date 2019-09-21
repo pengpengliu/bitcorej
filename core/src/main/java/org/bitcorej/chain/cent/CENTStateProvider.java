@@ -1,5 +1,6 @@
 package org.bitcorej.chain.cent;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.bitcoinj.core.*;
 import org.bitcoinj.crypto.TransactionSignature;
 import org.bitcoinj.params.TestNet3Params;
@@ -16,6 +17,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import static org.bitcoinj.core.Utils.uint32ToByteStreamLE;
@@ -120,7 +123,10 @@ public class CENTStateProvider extends BitcoinStateProvider {
 
     void bitcoinSerializeToStream(Transaction rawTx, OutputStream stream) throws IOException {
         uint32ToByteStreamLE(rawTx.getVersion(), stream);
-        stream.write(NumericUtil.hexToBytes("4e4a805d"));
+        long now = new Date().getTime() / 1000;
+        byte[] nTime = BigInteger.valueOf(now).toByteArray();
+        ArrayUtils.reverse(nTime);
+        stream.write(nTime);
         stream.write(new VarInt(rawTx.getInputs().size()).encode());
         for (TransactionInput in : rawTx.getInputs())
             in.bitcoinSerialize(stream);
