@@ -1,6 +1,9 @@
 package org.bitcorej.chain.cent;
 
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.params.AbstractBitcoinNetParams;
+
+import static org.bitcoinj.core.Coin.COIN;
 
 public class CENTNetParameters extends AbstractBitcoinNetParams {
 
@@ -25,6 +28,11 @@ public class CENTNetParameters extends AbstractBitcoinNetParams {
     @Override
     public String getPaymentProtocolId() {
         return "main";
+    }
+
+    @Override
+    public Coin getMaxMoney() {
+        return COIN.multiply(5000000000l);
     }
 }
 
