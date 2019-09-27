@@ -1,6 +1,7 @@
 package org.bitcorej.chain.zcash;
 
 import com.rfksystems.blake2b.Blake2b;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bitcoinj.core.*;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
@@ -25,6 +26,8 @@ public class ZcashStateProvider extends BitcoinStateProvider {
 
     private static final long VERSION_GROUP_ID = 2301567109L; // 0x03C48270 (63210096) for overwinter and 0x892F2085 (2301567109) for sapling
 
+    protected long consensusBranchId;
+
     public ZcashStateProvider(Network network) {
         super(network);
         switch (network) {
@@ -40,6 +43,7 @@ public class ZcashStateProvider extends BitcoinStateProvider {
         }
 
         super.network = network;
+        consensusBranchId = 1991772603l;
     }
 
     @Override
@@ -204,7 +208,14 @@ public class ZcashStateProvider extends BitcoinStateProvider {
                 Utils.uint32ToByteStreamLE(input.getSequenceNumber(), stream);
 
                 byte[] hashPreimage = stream.toByteArray();
-                byte[] signatureHash = this.getBlake2bHash(hashPreimage, NumericUtil.hexToBytes("5a6361736853696748617368bb09b876"));
+
+                // "ZcashSigHash".getBytes() + NumericUtil.hexToBytes("930b540d")
+                // byte[] personalization = ArrayUtils.addAll("ZcashSigHash".getBytes(), NumericUtil.hexToBytes("76b809bb"));
+                stream = new UnsafeByteArrayOutputStream(16);
+                stream.write("ZcashSigHash".getBytes());
+                Utils.uint32ToByteStreamLE(consensusBranchId, stream);
+                byte[] personalization = stream.toByteArray();
+                byte[] signatureHash = this.getBlake2bHash(hashPreimage, personalization);
                 ECKey.ECDSASignature signature = ecKey.sign(Sha256Hash.wrap(signatureHash));
                 byte hashType = 0x01;
                 // sig

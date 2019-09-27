@@ -30,6 +30,7 @@ import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
 import org.bitcorej.chain.vsys.VSYSStateProvider;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
+import org.bitcorej.chain.zcl.ZCLStateProvider;
 import org.bitcorej.core.Network;
 
 import java.util.HashMap;
@@ -63,6 +64,7 @@ public class ChainStateProxy implements ChainState {
         services.put("DASH_TEST", new DashStateProvider(Network.TEST));
         services.put("ZEC_MAIN", new ZcashStateProvider(Network.MAIN));
         services.put("ZEC_TEST", new ZcashStateProvider(Network.TEST));
+        services.put("ZCL", new ZCLStateProvider(Network.MAIN));
         services.put("DOGE_MAIN", new DogecoinStateProvider(Network.MAIN));
         services.put("DOGE_TEST", new DogecoinStateProvider(Network.TEST));
         services.put("QTUM_MAIN", new QTUMStateProvider(Network.MAIN));
