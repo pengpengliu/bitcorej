@@ -17,6 +17,7 @@ import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
+import org.bitcorej.chain.meta.METAStateProvider;
 import org.bitcorej.chain.naka.NAKAStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
 import org.bitcorej.chain.ong.ONGStateProvider;
@@ -51,6 +52,7 @@ public class ChainStateProxy implements ChainState {
         services.put("USDT_MAIN", new USDTStateProvider(Network.MAIN));
         services.put("USDT_TEST", new USDTStateProvider(Network.TEST));
         services.put("ETH", new EthereumStateProvider());
+        services.put("META", new METAStateProvider());
         services.put("ERC20", new ERC20StateProvider());
         services.put("EOS_MAIN", new EOSStateProvider(Network.MAIN));
         services.put("EOS_TEST", new EOSStateProvider(Network.TEST));
