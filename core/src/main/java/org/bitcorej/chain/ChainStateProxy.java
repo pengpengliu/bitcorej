@@ -30,6 +30,7 @@ import org.bitcorej.chain.trx.TRXStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
 import org.bitcorej.chain.vsys.VSYSStateProvider;
+import org.bitcorej.chain.xmr.XMRStateProvider;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.chain.zcl.ZCLStateProvider;
 import org.bitcorej.core.Network;
@@ -96,6 +97,7 @@ public class ChainStateProxy implements ChainState {
         services.put("BTT", trx);
         services.put("BNB", new BinanceStateProvider());
         services.put("CENT", new CENTStateProvider(Network.MAIN));
+        services.put("XMR", new XMRStateProvider());
     }
 
     private ChainState provider;
