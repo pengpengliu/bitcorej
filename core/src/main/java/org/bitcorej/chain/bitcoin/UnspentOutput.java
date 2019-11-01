@@ -2,6 +2,7 @@ package org.bitcorej.chain.bitcoin;
 
 import org.bitcoinj.core.Address;
 import org.bitcoinj.core.Base58;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.bch.AddressConverter;
@@ -33,6 +34,15 @@ public class UnspentOutput {
                     .op(OP_DUP)
                     .op(OP_HASH160)
                     .data(bytes)
+                    .op(OP_EQUALVERIFY)
+                    .op(OP_CHECKSIG)
+                    .build();
+            this.scriptPubKey = NumericUtil.bytesToHex(script.getProgram());
+        } else if (address.matches("^M[a-zA-Z0-9]{33}$")) {
+            Script script = new ScriptBuilder()
+                    .op(OP_DUP)
+                    .op(OP_HASH160)
+                    .data(Address.fromBase58(null, address).getHash160())
                     .op(OP_EQUALVERIFY)
                     .op(OP_CHECKSIG)
                     .build();

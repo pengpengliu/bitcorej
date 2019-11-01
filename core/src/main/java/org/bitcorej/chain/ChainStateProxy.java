@@ -17,6 +17,7 @@ import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
+import org.bitcorej.chain.mch.MCHStateProvider;
 import org.bitcorej.chain.meta.METAStateProvider;
 import org.bitcorej.chain.naka.NAKAStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
@@ -98,6 +99,7 @@ public class ChainStateProxy implements ChainState {
         services.put("BNB", new BinanceStateProvider());
         services.put("CENT", new CENTStateProvider(Network.MAIN));
         services.put("XMR", new XMRStateProvider());
+        services.put("MCH", new MCHStateProvider(Network.MAIN));
     }
 
     private ChainState provider;

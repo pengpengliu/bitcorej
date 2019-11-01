@@ -13,7 +13,6 @@ import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.bch.AddressConverter;
 import org.bitcorej.core.Network;
-import org.bitcorej.core.PrivateKey;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -57,7 +56,7 @@ public class BitcoinStateProvider implements ChainState {
         return Address.fromP2SHHash(this.params, Utils.sha256hash160(NumericUtil.hexToBytes(redeemScript))).toBase58();
     }
 
-    public static String generateP2PKHScript(String address) {
+    public static String generateP2PKHScript(String address, NetworkParameters params) {
         // Zcash
         if (address.matches("^t1[a-zA-Z0-9]{33}$")) {
             byte[] versionAndDataBytes = Base58.decodeChecked(address);
@@ -72,11 +71,26 @@ public class BitcoinStateProvider implements ChainState {
                     .build();
             return NumericUtil.bytesToHex(script.getProgram());
         }
+        // MCH
+        if (address.matches("^M[a-zA-Z0-9]{33}$")) {
+            Script script = new ScriptBuilder()
+                    .op(OP_DUP)
+                    .op(OP_HASH160)
+                    .data(Address.fromBase58(null, address).getHash160())
+                    .op(OP_EQUALVERIFY)
+                    .op(OP_CHECKSIG)
+                    .build();
+            return NumericUtil.bytesToHex(script.getProgram());
+        }
         // Bitcoin Cash
         if (address.matches("^(bitcoincash:)?(q|p)[a-z0-9]{41}")) {
             address = AddressConverter.toLegacyAddress(address);
         }
-        return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
+        return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(params, address)).getProgram());
+    }
+
+    public static String generateP2PKHScript(String address) {
+        return BitcoinStateProvider.generateP2PKHScript(address, Address.getParametersFromAddress(address));
     }
 
     @Override
@@ -101,6 +115,10 @@ public class BitcoinStateProvider implements ChainState {
     }
 
     public static String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
+        return BitcoinStateProvider.encodeTransaction(utxos, recipients, changeAddress, fee, DECIMALS);
+    }
+
+    public static String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals) {
         JSONObject encodedTx = new JSONObject();
 
         BigDecimal totalInputAmount = new BigDecimal(0);
@@ -139,7 +157,7 @@ public class BitcoinStateProvider implements ChainState {
 
         BigDecimal changeAmount = totalInputAmount.subtract(totalOutputAmount.add(fee));
 
-        if (changeAmount.compareTo(DUST_THRESHOLD.divide(DECIMALS)) > -1) {
+        if (changeAmount.compareTo(DUST_THRESHOLD.divide(decimals)) > -1) {
             JSONObject encodedOutput = new JSONObject();
             encodedOutput.put("amount", changeAmount.toString());
             String script = BitcoinStateProvider.generateP2PKHScript(changeAddress);
