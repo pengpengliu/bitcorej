@@ -3,6 +3,8 @@ package org.bitcorej.chain.vsys;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
+import org.bitcorej.chain.vsys.utils.BytesHelper;
+import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
 import org.whispersystems.curve25519.Curve25519;
 import org.whispersystems.curve25519.Curve25519KeyPair;
@@ -12,6 +14,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class VSYSStateProvider implements ChainState {
     private static final byte V2 = 2;
 
     private static final byte PAYMENT = 2;
+    private static final byte EXECUTE_CONTRACT = 9;
 
     private byte chainId = MAIN_NET;
 
@@ -85,35 +89,89 @@ public class VSYSStateProvider implements ChainState {
 
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
-        JSONObject packedTx = new JSONObject(rawTx);
-
-        String attachment = packedTx.getString("attachment");
+        JSONObject rawTxJSON = new JSONObject(rawTx);
+        String attachment = rawTxJSON.getString("attachment");
         byte[] attachmentBytes = (attachment == null ? "" : attachment).getBytes();
+        String recipient = rawTxJSON.getString("recipient");
+        long amount = rawTxJSON.getLong("amount");
+
+        JSONObject packedTx = new JSONObject();
         packedTx.put("attachment", Base58.encode(attachmentBytes));
 
         Timestamp ts = new Timestamp(new Date().getTime());
         BigInteger timestamp = BigInteger.valueOf(ts.getTime() / 1000 * 1000000000 + ts.getNanos());
         packedTx.put("timestamp", timestamp.longValue());
-        String recipient = packedTx.getString("recipient");
-        long amount = packedTx.getLong("amount");
-        long fee = 10000000;
-        packedTx.put("fee", fee);
-        short feeScale = Short.valueOf("100");
-        packedTx.put("feeScale", feeScale);
 
-        ByteBuffer buf = ByteBuffer.allocate(KBYTE);
-        buf.put(PAYMENT);
-        putBigInteger(buf, timestamp);
-        buf.putLong(amount).putLong(fee);
-        buf.putShort(feeScale);
-        putRecipient(buf, chainId, recipient);
-        putString(buf, attachment);
+        int type = 2;
+        if (rawTxJSON.has("coin")) {
+            JSONObject coin = rawTxJSON.getJSONObject("coin");
+            if (!coin.get("id").equals("VSYS")) {
+                type = 9;
+            }
+        }
+        // Token Transfer
+        if (type == 9) {
+            JSONObject coin = rawTxJSON.getJSONObject("coin");
+            String contractId = coin.getString("contractId");
 
-        byte[] key = Base58.decode(keys.get(0));
-        packedTx.put("senderPublicKey", Base58.encode(generatePublickKey(key)));
-        String signature = sign(key, toBytes(buf));
+            long fee = 30000000L;
+            short feeScale = Short.parseShort("100");
+            packedTx.put("fee", fee);
+            packedTx.put("feeScale", feeScale);
 
-        packedTx.put("signature", signature);
+            byte[] functionData = BytesHelper.toBytes((short)2);
+            functionData = BytesHelper.concat(functionData, new byte[]{ 2 });
+            functionData = BytesHelper.concat(functionData, Base58.decode(recipient));
+            functionData = BytesHelper.concat(functionData, new byte[]{ 3 });
+            functionData = BytesHelper.concat(functionData, BytesHelper.toBytes(amount));
+
+            byte[] key = Base58.decode(keys.get(0));
+
+            byte[] serialized = new byte[]{};
+            serialized = BytesHelper.concat(serialized, new byte[]{ EXECUTE_CONTRACT });
+            serialized = BytesHelper.concat(serialized, Base58.decode(contractId));
+            serialized = BytesHelper.concat(serialized, BytesHelper.toBytes((short)3));  // functionIndex
+            serialized = BytesHelper.concat(serialized, BytesHelper.toBytes((short)functionData.length));
+            serialized = BytesHelper.concat(serialized, functionData);
+            serialized = BytesHelper.concat(serialized, BytesHelper.toBytes((short)attachmentBytes.length));
+            serialized = BytesHelper.concat(serialized, attachmentBytes);
+            serialized = BytesHelper.concat(serialized, BytesHelper.toBytes(fee));
+            serialized = BytesHelper.concat(serialized, BytesHelper.toBytes(feeScale));
+            serialized = BytesHelper.concat(serialized, timestamp.toByteArray());
+
+            packedTx.put("contractId", contractId);
+            packedTx.put("functionIndex", 3);
+            packedTx.put("functionData", Base58.encode(functionData));
+
+            packedTx.put("senderPublicKey", Base58.encode(generatePublickKey(key)));
+            String signature = sign(key, serialized);
+            packedTx.put("signature", signature);
+        }
+        // Payment
+        else {
+            long fee = 10000000L;
+            short feeScale = Short.parseShort("100");
+            packedTx.put("fee", fee);
+            packedTx.put("feeScale", feeScale);
+
+            ByteBuffer buf = ByteBuffer.allocate(KBYTE);
+            buf.put(PAYMENT);
+            putBigInteger(buf, timestamp);
+            buf.putLong(amount).putLong(fee);
+            buf.putShort(feeScale);
+            putRecipient(buf, chainId, recipient);
+            putString(buf, attachment);
+
+            packedTx.put("amount", amount);
+            packedTx.put("recipient", recipient);
+
+            byte[] key = Base58.decode(keys.get(0));
+            packedTx.put("senderPublicKey", Base58.encode(generatePublickKey(key)));
+            String signature = sign(key, toBytes(buf));
+
+            packedTx.put("signature", signature);
+        }
+
         return packedTx.toString();
     }
 
