@@ -56,7 +56,7 @@ public class BitcoinStateProvider implements ChainState {
         return Address.fromP2SHHash(this.params, Utils.sha256hash160(NumericUtil.hexToBytes(redeemScript))).toBase58();
     }
 
-    public static String generateP2PKHScript(String address, NetworkParameters params) {
+    public static String generateP2PKHScript(String address) {
         // Zcash
         if (address.matches("^t1[a-zA-Z0-9]{33}$")) {
             byte[] versionAndDataBytes = Base58.decodeChecked(address);
@@ -86,11 +86,7 @@ public class BitcoinStateProvider implements ChainState {
         if (address.matches("^(bitcoincash:)?(q|p)[a-z0-9]{41}")) {
             address = AddressConverter.toLegacyAddress(address);
         }
-        return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(params, address)).getProgram());
-    }
-
-    public static String generateP2PKHScript(String address) {
-        return BitcoinStateProvider.generateP2PKHScript(address, Address.getParametersFromAddress(address));
+        return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(address), address)).getProgram());
     }
 
     @Override
