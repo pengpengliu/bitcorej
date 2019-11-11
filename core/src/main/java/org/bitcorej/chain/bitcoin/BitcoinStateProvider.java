@@ -11,6 +11,7 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
+import org.bitcorej.chain.UTXOState;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONArray;
@@ -19,7 +20,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class BitcoinStateProvider implements ChainState {
+public class BitcoinStateProvider implements ChainState, UTXOState {
     protected static final BigDecimal DECIMALS = new BigDecimal(10).pow(8);
     protected final static BigDecimal DUST_THRESHOLD = new BigDecimal(2730);
 

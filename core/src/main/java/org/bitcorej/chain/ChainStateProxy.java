@@ -4,6 +4,8 @@ import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bhd.BHDStateProvider;
 import org.bitcorej.chain.binance.BinanceStateProvider;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
+import org.bitcorej.chain.bitcoin.Recipient;
+import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.cent.CENTStateProvider;
 import org.bitcorej.chain.cosmos.CosmosStateProvider;
@@ -36,10 +38,11 @@ import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.chain.zcl.ZCLStateProvider;
 import org.bitcorej.core.Network;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChainStateProxy implements ChainState {
+public class ChainStateProxy implements ChainState, UTXOState, USDTState {
     private static HashMap<String, ChainState> services;
 
     static
@@ -152,5 +155,45 @@ public class ChainStateProxy implements ChainState {
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         return provider.signRawTransaction(rawTx, keys);
+    }
+
+    @Override
+    public String generateP2PKHScript(String address) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).generateP2PKHScript(address);
+        }
+        return null;
+    }
+
+    @Override
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee);
+        }
+        return null;
+    }
+
+    @Override
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee, decimals);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Recipient> buildRecipients(String from, String to, BigDecimal amount) {
+        if (this.provider instanceof USDTState) {
+            return ((USDTState) this.provider).buildRecipients(from, to, amount);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Recipient> buildRecipients(String from, String to, BigDecimal amount, int propertyId) {
+        if (this.provider instanceof USDTState) {
+            return ((USDTState) this.provider).buildRecipients(from, to, amount, propertyId);
+        }
+        return null;
     }
 }

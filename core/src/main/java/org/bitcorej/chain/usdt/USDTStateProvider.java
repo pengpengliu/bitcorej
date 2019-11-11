@@ -2,9 +2,9 @@ package org.bitcorej.chain.usdt;
 
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
+import org.bitcorej.chain.USDTState;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.bitcoin.Recipient;
-import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.NumericUtil;
 
@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class USDTStateProvider extends BitcoinStateProvider {
+public class USDTStateProvider extends BitcoinStateProvider implements USDTState {
     public USDTStateProvider(Network network) {
         super(network);
     }
