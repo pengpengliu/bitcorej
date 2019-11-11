@@ -1,7 +1,6 @@
 package org.bitcorej.chain.zcash;
 
 import com.rfksystems.blake2b.Blake2b;
-import org.apache.commons.lang3.ArrayUtils;
 import org.bitcoinj.core.*;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static org.bitcoinj.script.ScriptOpCodes.*;
 
 public class ZcashStateProvider extends BitcoinStateProvider {
 
@@ -46,10 +47,24 @@ public class ZcashStateProvider extends BitcoinStateProvider {
         consensusBranchId = 1991772603l;
     }
 
+    public String generateP2PKHScript(String address) {
+        byte[] versionAndDataBytes = Base58.decodeChecked(address);
+        byte[] bytes = new byte[versionAndDataBytes.length - 2];
+        System.arraycopy(versionAndDataBytes, 2, bytes, 0, versionAndDataBytes.length - 2);
+        Script script = new ScriptBuilder()
+                .op(OP_DUP)
+                .op(OP_HASH160)
+                .data(bytes)
+                .op(OP_EQUALVERIFY)
+                .op(OP_CHECKSIG)
+                .build();
+        return NumericUtil.bytesToHex(script.getProgram());
+    }
+
     @Override
     protected String selectPrivateKeys(Script script, List<String> keys) {
         for (int i = 0; i < keys.size(); i++) {
-            if (NumericUtil.bytesToHex(script.getProgram()).equals(BitcoinStateProvider.generateP2PKHScript(this.generateKeyPair(keys.get(i)).getPublic()))) {
+            if (NumericUtil.bytesToHex(script.getProgram()).equals(generateP2PKHScript(this.generateKeyPair(keys.get(i)).getPublic()))) {
                 return keys.get(i);
             }
         }

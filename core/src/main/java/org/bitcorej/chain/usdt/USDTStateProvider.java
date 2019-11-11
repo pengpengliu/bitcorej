@@ -17,10 +17,14 @@ public class USDTStateProvider extends BitcoinStateProvider {
         super(network);
     }
 
-    public static List<Recipient> buildRecipients(String from, String to, BigDecimal amount, int propertyId) {
+    public List<Recipient> buildRecipients(String from, String to, BigDecimal amount) {
+        return buildRecipients(from, to, amount, 1);
+    }
+
+    public List<Recipient> buildRecipients(String from, String to, BigDecimal amount, int propertyId) {
         List<Recipient> recipients = new ArrayList<>();
 
-        recipients.add(new Recipient(BitcoinStateProvider.generateP2PKHScript(to), new BigDecimal("0.00000546")));
+        recipients.add(new Recipient(generateP2PKHScript(to), new BigDecimal("0.00000546")));
 
         String protocolHex = "6f6d6e69"; // omni
         String versionHex = "0000";

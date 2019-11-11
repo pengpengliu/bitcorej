@@ -9,7 +9,7 @@ public class LitecoinNetParameters extends AbstractBitcoinNetParams {
         id = "org.litecoin.production";
         packetMagic = 0xFBC0B6DBL;
         addressHeader = 48;
-        p2shHeader = 5;
+        p2shHeader = 0x32;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
         dumpedPrivateKeyHeader = 128;
         bip32HeaderPub = 0x0488B21E;
