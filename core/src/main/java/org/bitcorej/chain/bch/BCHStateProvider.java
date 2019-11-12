@@ -17,6 +17,13 @@ public class BCHStateProvider extends BitcoinStateProvider {
         super(network);
     }
 
+    public String generateP2PKHScript(String address) {
+        if (address.matches("^(bitcoincash:)?(q|p)[a-z0-9]{41}")) {
+            address = AddressConverter.toLegacyAddress(address);
+        }
+        return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(this.params, address)).getProgram());
+    }
+
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         Transaction tx = super.buildTransaction(rawTx);
