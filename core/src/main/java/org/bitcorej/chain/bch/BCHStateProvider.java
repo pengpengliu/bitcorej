@@ -7,6 +7,7 @@ import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.NumericUtil;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
@@ -60,6 +61,10 @@ public class BCHStateProvider extends BitcoinStateProvider {
         JSONObject packedTx = new JSONObject();
         packedTx.put("txid", tx.getHashAsString());
         packedTx.put("raw", NumericUtil.bytesToHex(tx.bitcoinSerialize()));
+
+        if (decodedTx.has("destinations")) {
+            packedTx.put("destinations", decodedTx.getJSONArray("destinations"));
+        }
         return packedTx.toString();
     }
 }

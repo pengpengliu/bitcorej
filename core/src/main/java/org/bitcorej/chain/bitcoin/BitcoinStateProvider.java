@@ -54,6 +54,18 @@ public class BitcoinStateProvider implements ChainState, UTXOState {
         return Address.fromP2SHHash(this.params, Utils.sha256hash160(NumericUtil.hexToBytes(redeemScript))).toBase58();
     }
 
+    public String calcRedeemScript(String segWitAddress) {
+        byte[] pubKeyHash = Address.fromBase58(this.params, segWitAddress).getHash160();
+        String redeemScript = String.format("0014%s", NumericUtil.bytesToHex(pubKeyHash));
+        return redeemScript;
+    }
+
+    public String calcWitnessScript(String segWitAddress) {
+        byte[] pubKeyHash = Address.fromBase58(this.params, segWitAddress).getHash160();
+        byte[] scriptCode = NumericUtil.hexToBytes(String.format("0x1976a914%s88ac", NumericUtil.bytesToHex(pubKeyHash)));
+        return NumericUtil.bytesToHex(scriptCode);
+    }
+
     public String generateP2PKHScript(String address) {
         return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(this.params, address)).getProgram());
     }
@@ -105,6 +117,7 @@ public class BitcoinStateProvider implements ChainState, UTXOState {
 
         BigDecimal totalOutputAmount = new BigDecimal(0);
         JSONArray encodedOutputs = new JSONArray();
+        JSONArray destinations = new JSONArray();
         for (int i = 0; i < recipients.size(); i++) {
             Recipient recipient = recipients.get(i);
             JSONObject encodedOutput = new JSONObject();
@@ -112,9 +125,10 @@ public class BitcoinStateProvider implements ChainState, UTXOState {
             encodedOutput.put("amount", amount.toString());
             totalOutputAmount = totalOutputAmount.add(amount);
 
-            String script = recipient.getScript();
+            String script = generateP2PKHScript(recipient.getAddress());
             encodedOutput.put("script", script);
             encodedOutputs.put(encodedOutput);
+            destinations.put(recipient.toString());
         }
 
         if (totalInputAmount.compareTo(totalOutputAmount) < 1) {
@@ -134,6 +148,8 @@ public class BitcoinStateProvider implements ChainState, UTXOState {
         encodedTx.put("version", 1);
         encodedTx.put("inputs", encodedInputs);
         encodedTx.put("outputs", encodedOutputs);
+
+        encodedTx.put("destinations", destinations);
 
         encodedTx.put("nLockTime", 0);
         return encodedTx.toString();
@@ -162,9 +178,16 @@ public class BitcoinStateProvider implements ChainState, UTXOState {
         return tx;
     }
 
+    public String toWIF(String privateKeyHex) {
+        return ECKey.fromPrivate(NumericUtil.hexToBytes(privateKeyHex)).getPrivateKeyAsWiF(this.params);
+    }
+
     protected String selectPrivateKeys(Script script, List<String> keys) {
         for (int i = 0; i < keys.size(); i++) {
-            if (script.getToAddress(this.params).toString().equals(this.generateKeyPair(keys.get(i)).getPublic())) {
+            String address = script.getToAddress(this.params).toString();
+            String legacyAddress = this.generateKeyPair(keys.get(i)).getPublic();
+            String segWitAddress = this.calcSegWitAddress(legacyAddress);
+            if (address.equals(legacyAddress) || address.equals(segWitAddress)) {
                 return keys.get(i);
             }
         }
@@ -173,6 +196,7 @@ public class BitcoinStateProvider implements ChainState, UTXOState {
 
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
+        JSONObject rawTxJSON = new JSONObject(rawTx);
         Transaction tx = buildTransaction(rawTx);
 
         for (int i = 0; i < tx.getInputs().size(); i++) {
@@ -198,6 +222,11 @@ public class BitcoinStateProvider implements ChainState, UTXOState {
         JSONObject packedTx = new JSONObject();
         packedTx.put("txid", tx.getHashAsString());
         packedTx.put("raw", NumericUtil.bytesToHex(tx.bitcoinSerialize()));
+
+        if (rawTxJSON.has("destinations")) {
+            packedTx.put("destinations", rawTxJSON.getJSONArray("destinations"));
+        }
+
         return packedTx.toString();
     }
 }

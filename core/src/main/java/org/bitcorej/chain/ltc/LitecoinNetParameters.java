@@ -11,7 +11,7 @@ public class LitecoinNetParameters extends AbstractBitcoinNetParams {
         addressHeader = 48;
         p2shHeader = 0x32;
         acceptableAddressCodes = new int[] { addressHeader, p2shHeader };
-        dumpedPrivateKeyHeader = 128;
+        dumpedPrivateKeyHeader = 0xb0;
         bip32HeaderPub = 0x0488B21E;
         bip32HeaderPriv = 0x0488ADE4;
     }

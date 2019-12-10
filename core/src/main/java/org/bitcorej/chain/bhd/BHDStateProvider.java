@@ -39,6 +39,7 @@ public class BHDStateProvider extends BitcoinStateProvider {
 
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
+        JSONObject rawTxJSON = new JSONObject(rawTx);
         Transaction tx = buildTransaction(rawTx);
         tx.setVersion(2);
         try {
@@ -189,6 +190,10 @@ public class BHDStateProvider extends BitcoinStateProvider {
             JSONObject packedTx = new JSONObject();
             packedTx.put("txid", txid);
             packedTx.put("raw", signedHex);
+
+            if (rawTxJSON.has("destinations")) {
+                packedTx.put("destinations", rawTxJSON.getJSONArray("destinations"));
+            }
             return packedTx.toString();
         } catch (IOException e) {
             e.printStackTrace();

@@ -23,6 +23,7 @@ import org.bitcorej.chain.mch.MCHStateProvider;
 import org.bitcorej.chain.meta.METAStateProvider;
 import org.bitcorej.chain.naka.NAKAStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
+import org.bitcorej.chain.nrg.NRGStateProvider;
 import org.bitcorej.chain.ong.ONGStateProvider;
 import org.bitcorej.chain.ont.ONTStateProvider;
 import org.bitcorej.chain.pi.PIStateProvider;
@@ -71,7 +72,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         services.put("DASH_TEST", new DashStateProvider(Network.TEST));
         services.put("ZEC_MAIN", new ZcashStateProvider(Network.MAIN));
         services.put("ZEC_TEST", new ZcashStateProvider(Network.TEST));
-        services.put("ZCL", new ZCLStateProvider(Network.MAIN));
+        ZCLStateProvider zcl = new ZCLStateProvider(Network.MAIN);
+        services.put("ZCL", zcl);
+        services.put("ZCL_MAIn", zcl);
         services.put("DOGE_MAIN", new DogecoinStateProvider(Network.MAIN));
         services.put("DOGE_TEST", new DogecoinStateProvider(Network.TEST));
         services.put("QTUM_MAIN", new QTUMStateProvider(Network.MAIN));
@@ -100,12 +103,23 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         services.put("TRX", trx);
         services.put("BTT", trx);
         services.put("BNB", new BinanceStateProvider());
-        services.put("CENT", new CENTStateProvider(Network.MAIN));
+        CENTStateProvider cent = new CENTStateProvider(Network.MAIN);
+        services.put("CENT", cent);
+        services.put("CENT_MAIN", cent);
+        MCHStateProvider mch = new MCHStateProvider(Network.MAIN);
+        services.put("MCH", mch);
+        services.put("MCH_MAIN", mch);
         services.put("XMR", new XMRStateProvider());
-        services.put("MCH", new MCHStateProvider(Network.MAIN));
+        NRGStateProvider nrg = new NRGStateProvider(Network.MAIN);
+        services.put("NRG", nrg);
+        services.put("NRG_MAIN", nrg);
     }
 
     private ChainState provider;
+
+    public ChainStateProxy(ChainState provider) {
+        this.provider = provider;
+    }
 
     public ChainState getProvider() {
         return provider;
@@ -155,6 +169,38 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         return provider.signRawTransaction(rawTx, keys);
+    }
+
+    @Override
+    public String toWIF(String privateKeyHex) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).toWIF(privateKeyHex);
+        }
+        return null;
+    }
+
+    @Override
+    public String calcRedeemScript(String segWitAddress) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).calcRedeemScript(segWitAddress);
+        }
+        return null;
+    }
+
+    @Override
+    public String calcWitnessScript(String segWitAddress) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).calcWitnessScript(segWitAddress);
+        }
+        return null;
+    }
+
+    @Override
+    public String calcSegWitAddress(String legacyAddress) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).calcSegWitAddress(legacyAddress);
+        }
+        return null;
     }
 
     @Override

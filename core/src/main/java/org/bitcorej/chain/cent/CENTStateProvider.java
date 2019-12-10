@@ -166,6 +166,10 @@ public class CENTStateProvider extends BitcoinStateProvider {
             bitcoinSerializeToStream(tx, bos);
             packedTx.put("txid", Sha256Hash.wrapReversed(Sha256Hash.hashTwice(bos.toByteArray())).toString());
             packedTx.put("raw", NumericUtil.bytesToHex(bos.toByteArray()));
+
+            if (rawTxJSON.has("destinations")) {
+                packedTx.put("destinations", rawTxJSON.getJSONArray("destinations"));
+            }
             return packedTx.toString();
         } catch (IOException e) {
             throw new RuntimeException(e);  // Cannot happen.

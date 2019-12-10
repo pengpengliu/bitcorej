@@ -3,19 +3,24 @@ package org.bitcorej.chain.bitcoin;
 import java.math.BigDecimal;
 
 public class Recipient {
-    private String script;
+    private String address;
     private BigDecimal amount;
 
-    public Recipient(String script, BigDecimal amount) {
-        this.script = script;
+    public Recipient(String address, BigDecimal amount) {
+        this.address = address;
         this.amount = amount;
     }
 
-    public String getScript() {
-        return script;
+    public String getAddress() {
+        return address;
     }
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    @Override
+    public String toString() {
+        return address + " " + amount;
     }
 }

@@ -134,6 +134,7 @@ public class ZcashStateProvider extends BitcoinStateProvider {
 
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
+        JSONObject rawTxJSON = new JSONObject(rawTx);
         Transaction tx = buildTransaction(rawTx);
         tx.setVersion(4);
 
@@ -279,6 +280,9 @@ public class ZcashStateProvider extends BitcoinStateProvider {
             JSONObject packedTx = new JSONObject();
             packedTx.put("txid", txid);
             packedTx.put("raw", NumericUtil.bytesToHex(serialized));
+            if (rawTxJSON.has("destinations")) {
+                packedTx.put("destinations", rawTxJSON.getJSONArray("destinations"));
+            }
             return packedTx.toString();
         } catch (Exception e) {
             e.printStackTrace();
