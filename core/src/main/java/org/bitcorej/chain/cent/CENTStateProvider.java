@@ -138,6 +138,7 @@ public class CENTStateProvider extends BitcoinStateProvider {
 
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
+        JSONObject rawTxJSON = new JSONObject(rawTx);
         Transaction tx = buildTransaction(rawTx);
         for (int i = 0; i < tx.getInputs().size(); i++) {
             TransactionInput input = tx.getInput(i);
