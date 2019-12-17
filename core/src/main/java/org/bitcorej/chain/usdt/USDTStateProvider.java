@@ -83,7 +83,11 @@ public class USDTStateProvider extends BitcoinStateProvider implements USDTState
     }
 
     public String generateScriptHash(Recipient recipient) {
-        int propertyId = 0; // USDT
+        int propertyId = 31; // USDT
+        return generateScriptHash(recipient, propertyId);
+    }
+
+    public String generateScriptHash(Recipient recipient, int propertyId) {
         String protocolHex = "6f6d6e69"; // omni
         String versionHex = "0000";
         String propertyPrefixHex = "000000000000";
