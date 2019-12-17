@@ -48,7 +48,9 @@ public class USDTStateProvider extends BitcoinStateProvider implements USDTState
         // Step 1
         JSONObject encodedOutput1 = new JSONObject();
         encodedOutput1.put("script", generateP2PKHScript(recipient.getAddress()));
-        encodedOutput1.put("amount", new BigDecimal("0.00000546").toString());
+        BigDecimal base = new BigDecimal("0.00000546");
+        totalOutputAmount.add(base);
+        encodedOutput1.put("amount", base.toString());
         encodedOutputs.put(encodedOutput1);
         // Step 2
         JSONObject encodedOutput2 = new JSONObject();
