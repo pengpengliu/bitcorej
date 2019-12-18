@@ -9,6 +9,7 @@ import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.cent.CENTStateProvider;
 import org.bitcorej.chain.cosmos.CosmosStateProvider;
+import org.bitcorej.chain.czz.CZZStateProvider;
 import org.bitcorej.chain.dash.DashStateProvider;
 import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.ABBCStateProvider;
@@ -113,6 +114,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         NRGStateProvider nrg = new NRGStateProvider(Network.MAIN);
         services.put("NRG", nrg);
         services.put("NRG_MAIN", nrg);
+        CZZStateProvider czz = new CZZStateProvider(Network.MAIN);
+        services.put("CZZ", czz);
+        services.put("CZZ_MAIN", nrg);
     }
 
     private ChainState provider;
