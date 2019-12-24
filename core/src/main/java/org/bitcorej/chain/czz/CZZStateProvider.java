@@ -6,9 +6,13 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.bch.BCHStateProvider;
+import org.bitcorej.chain.bitcoin.Recipient;
+import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.core.Network;
+import org.bitcorej.utils.BitUtils;
 import org.bitcorej.utils.NumericUtil;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CZZStateProvider extends BCHStateProvider {
@@ -21,6 +25,14 @@ public class CZZStateProvider extends BCHStateProvider {
             address = org.bitcorej.chain.bch.AddressConverter.toLegacyAddress(address);
         }
         return NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(this.params, address)).getProgram());
+    }
+
+    @Override
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals) {
+        for (UnspentOutput output : utxos) {
+            output.setTxId(NumericUtil.bytesToHex(BitUtils.reverseBytes(NumericUtil.hexToBytes(output.getTxId()))));
+        }
+        return super.encodeTransaction(utxos, recipients, changeAddress, fee, decimals);
     }
 
     @Override

@@ -23,6 +23,10 @@ public class UnspentOutput {
         return txId;
     }
 
+    public void setTxId(String txId) {
+        this.txId = txId;
+    }
+
     public int getVout() {
         return vout;
     }
