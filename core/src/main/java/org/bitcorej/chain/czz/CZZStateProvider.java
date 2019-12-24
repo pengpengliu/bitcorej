@@ -1,7 +1,6 @@
 package org.bitcorej.chain.czz;
 
-import org.bitcoinj.core.Address;
-import org.bitcoinj.core.ECKey;
+import org.bitcoinj.core.*;
 import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.KeyPair;
@@ -11,6 +10,7 @@ import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.BitUtils;
 import org.bitcorej.utils.NumericUtil;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -51,5 +51,12 @@ public class CZZStateProvider extends BCHStateProvider {
         ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(secret));
         String address = AddressConverter.toCashAddress(ecKey.toAddress(this.params).toString());
         return new KeyPair(ecKey.getPrivateKeyAsHex(), address);
+    }
+
+    @Override
+    public String signRawTransaction(String rawTx, List<String> keys) {
+        JSONObject packedTx = new JSONObject(super.signRawTransaction(rawTx, keys));
+        packedTx.put("txid", NumericUtil.bytesToHex(BitUtils.reverseBytes(NumericUtil.hexToBytes(packedTx.getString("txid")))));
+        return packedTx.toString();
     }
 }
