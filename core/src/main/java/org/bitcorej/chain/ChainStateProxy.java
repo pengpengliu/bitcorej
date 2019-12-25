@@ -20,6 +20,7 @@ import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
 import org.bitcorej.chain.ltc.LitecoinStateProvider;
+import org.bitcorej.chain.luna.LUNAStateProvider;
 import org.bitcorej.chain.mch.MCHStateProvider;
 import org.bitcorej.chain.meta.METAStateProvider;
 import org.bitcorej.chain.naka.NAKAStateProvider;
@@ -117,6 +118,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         CZZStateProvider czz = new CZZStateProvider(Network.MAIN);
         services.put("CZZ", czz);
         services.put("CZZ_MAIN", nrg);
+        LUNAStateProvider luna = new LUNAStateProvider();
+        services.put("LUNA", luna);
+        services.put("LUNA_MAIN", luna);
     }
 
     private ChainState provider;
