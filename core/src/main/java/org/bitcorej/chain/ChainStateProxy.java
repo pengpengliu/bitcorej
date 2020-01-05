@@ -8,6 +8,7 @@ import org.bitcorej.chain.bitcoin.Recipient;
 import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.cent.CENTStateProvider;
+import org.bitcorej.chain.ckb.CKBStateProvider;
 import org.bitcorej.chain.cosmos.CosmosStateProvider;
 import org.bitcorej.chain.czz.CZZStateProvider;
 import org.bitcorej.chain.dash.DashStateProvider;
@@ -121,6 +122,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         LUNAStateProvider luna = new LUNAStateProvider();
         services.put("LUNA", luna);
         services.put("LUNA_MAIN", luna);
+        CKBStateProvider ckb = new CKBStateProvider();
+        services.put("CKB", luna);
+        services.put("CKB_MAIN", luna);
     }
 
     private ChainState provider;
