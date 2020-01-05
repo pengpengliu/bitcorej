@@ -6,7 +6,9 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class NumericUtil {
@@ -222,5 +224,13 @@ public class NumericUtil {
             zeroLen = 3;
         }
         return Arrays.copyOfRange(intBytes, zeroLen, intBytes.length);
+    }
+
+    public static List<Integer> regionToList(int start, int length) {
+        List<Integer> integers = new ArrayList<>();
+        for (int i = start; i < (start + length); i++) {
+            integers.add(i);
+        }
+        return integers;
     }
 }
