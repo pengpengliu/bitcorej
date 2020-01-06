@@ -33,6 +33,7 @@ import org.bitcorej.chain.pi.PIStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
+import org.bitcorej.chain.stg.STGStateProvider;
 import org.bitcorej.chain.trx.TRXStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
@@ -123,8 +124,11 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         services.put("LUNA", luna);
         services.put("LUNA_MAIN", luna);
         CKBStateProvider ckb = new CKBStateProvider();
-        services.put("CKB", luna);
-        services.put("CKB_MAIN", luna);
+        services.put("CKB", ckb);
+        services.put("CKB_MAIN", ckb);
+        STGStateProvider stg = new STGStateProvider();
+        services.put("STG", stg);
+        services.put("STG_MAIN", stg);
     }
 
     private ChainState provider;
