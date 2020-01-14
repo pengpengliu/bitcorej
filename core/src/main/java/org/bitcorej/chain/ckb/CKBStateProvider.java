@@ -1,10 +1,7 @@
 package org.bitcorej.chain.ckb;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.core.UTXO;
-import org.bitcoinj.script.Script;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
@@ -19,7 +16,6 @@ import org.nervos.ckb.address.Network;
 import org.nervos.ckb.service.Api;
 import org.nervos.ckb.transaction.ScriptGroup;
 import org.nervos.ckb.transaction.Secp256k1SighashAllBuilder;
-import org.nervos.ckb.transaction.TransactionBuilder;
 import org.nervos.ckb.type.OutPoint;
 import org.nervos.ckb.type.Witness;
 import org.nervos.ckb.type.cell.CellInput;
@@ -89,7 +85,7 @@ public class CKBStateProvider implements ChainState, UTXOState {
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         org.nervos.ckb.type.transaction.Transaction tx = new Gson().fromJson(rawTx, org.nervos.ckb.type.transaction.Transaction.class);
-        TransactionBuilder txBuilder = new TransactionBuilder(new Api("http://localhost:8114", false));
+        TransactionBuilder txBuilder = new TransactionBuilder();
         txBuilder.addInputs(tx.inputs);
         txBuilder.addOutputs(tx.outputs);
 
@@ -156,7 +152,7 @@ public class CKBStateProvider implements ChainState, UTXOState {
             needCapacity = needCapacity.add(receiver.getAmount());
         }
 
-        TransactionBuilder txBuilder = new TransactionBuilder(new Api("http://localhost:8114", false));
+        TransactionBuilder txBuilder = new TransactionBuilder();
 
         List<CellOutput> cellOutputs = new ArrayList<>();
         for (Recipient receiver : recipients) {
@@ -239,7 +235,7 @@ public class CKBStateProvider implements ChainState, UTXOState {
             needCapacity = needCapacity.add(receiver.getAmount());
         }
 
-        TransactionBuilder txBuilder = new TransactionBuilder(new Api("http://localhost:8114", false));
+        TransactionBuilder txBuilder = new TransactionBuilder();
 
         List<CellOutput> cellOutputs = new ArrayList<>();
         for (Recipient receiver : recipients) {
