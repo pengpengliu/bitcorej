@@ -30,6 +30,7 @@ import org.bitcorej.chain.nrg.NRGStateProvider;
 import org.bitcorej.chain.ong.ONGStateProvider;
 import org.bitcorej.chain.ont.ONTStateProvider;
 import org.bitcorej.chain.pi.PIStateProvider;
+import org.bitcorej.chain.plc.PLCStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
@@ -129,6 +130,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         STGStateProvider stg = new STGStateProvider();
         services.put("STG", stg);
         services.put("STG_MAIN", stg);
+        PLCStateProvider plc = new PLCStateProvider(Network.MAIN);
+        services.put("PLC", plc);
+        services.put("PLC_MAIN", plc);
     }
 
     private ChainState provider;
