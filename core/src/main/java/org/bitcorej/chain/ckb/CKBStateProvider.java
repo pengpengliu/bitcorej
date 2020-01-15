@@ -252,8 +252,6 @@ public class CKBStateProvider implements ChainState, UTXOState {
                             Numeric.toHexStringWithPrefix(receiver.getAmount().multiply(DECIMALS).toBigInteger()), addressParseResult.script));
         }
 
-        AddressParseResult addressParseResult = AddressParser.parse(changeAddress);
-        cellOutputs.add(new CellOutput("0x0", addressParseResult.script));
         // Cal fees
         BigDecimal totalInputAmount = new BigDecimal(0);
         for (int i = 0; i < utxos.size(); i++) {
@@ -274,8 +272,14 @@ public class CKBStateProvider implements ChainState, UTXOState {
         }
 
         BigDecimal changeAmount = totalInputAmount.subtract(needCapacity.add(fee));
-        // update change output capacity after collecting cells
-        cellOutputs.get(cellOutputs.size() - 1).capacity = Numeric.toHexStringWithPrefix(changeAmount.multiply(DECIMALS).toBigInteger());
+
+        if (changeAmount.compareTo(MIN_CELL_CAPACITY.divide(DECIMALS)) > -1) {
+            AddressParseResult addressParseResult = AddressParser.parse(changeAddress);
+            cellOutputs.add(new CellOutput("0x0", addressParseResult.script));
+
+            // update change output capacity after collecting cells
+            cellOutputs.get(cellOutputs.size() - 1).capacity = Numeric.toHexStringWithPrefix(changeAmount.multiply(DECIMALS).toBigInteger());
+        }
         txBuilder.addOutputs(cellOutputs);
         String rawTx = new Gson().toJson(txBuilder.buildTx());
         JSONObject jo = new JSONObject(rawTx);
