@@ -127,7 +127,11 @@ public class CKBStateProvider implements ChainState, UTXOState {
                         scriptGroupWithPrivateKeys.scriptGroup, scriptGroupWithPrivateKeys.privateKeys.get(0));
             }
             Gson gson = new Gson();
-            return gson.toJson(Convert.parseTransaction(signBuilder.buildTx()));
+            org.nervos.ckb.type.transaction.Transaction t = signBuilder.buildTx();
+            JSONObject packedTx = new JSONObject();
+            packedTx.put("txid", t.computeHash());
+            packedTx.put("raw", gson.toJson(Convert.parseTransaction(t)));
+            return packedTx.toString();
         } catch (Exception e) {
             System.out.println(e);
         }
