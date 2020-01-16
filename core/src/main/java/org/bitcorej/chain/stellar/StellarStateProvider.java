@@ -74,11 +74,25 @@ public class StellarStateProvider implements ChainState {
         BigDecimal amount = new BigDecimal(jsonObject.getString("amount"));
         org.stellar.sdk.KeyPair source = org.stellar.sdk.KeyPair.fromSecretSeed(keys.get(0));
         org.stellar.sdk.KeyPair destination = org.stellar.sdk.KeyPair.fromAccountId(to);
+        Asset asset = null;
+        if (jsonObject.has("asset")) {
+            if(jsonObject.getString("asset").equals("XLM")) {
+                asset = new AssetTypeNative();
+            } else if (jsonObject.getString("asset").equals("LFEC")) {
+                asset = new AssetTypeCreditAlphaNum4("LFEC", org.stellar.sdk.KeyPair.fromAccountId("GAG6FS3CR64QJHLHJU7HNXUB4KBLXVDFQBDXM5LG22WOM7CA2ITJAVD2"));
+            } else {
+                throw new RuntimeException("no sup asset:" + jsonObject.getString("asset"));
+            }
+        }
         Operation op;
         if (type.equals("payment")) {
-            op = new PaymentOperation.Builder(destination, new AssetTypeNative(), amount.toString()).build();
+            op = new PaymentOperation.Builder(destination, asset, amount.toString()).build();
         } else if (type.equals("create_account")) {
             op = new CreateAccountOperation.Builder(destination, amount.toString()).build();
+        } else if (type.equals("change_trust")) {
+            op = new ChangeTrustOperation.Builder(new AssetTypeCreditAlphaNum4("LFEC", destination), "900000000000.0000000")
+                    .setSourceAccount(source)
+                    .build();
         } else {
             throw new RuntimeException("no sup op");
         }
