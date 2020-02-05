@@ -58,7 +58,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         services.put("BTC_TEST", new BitcoinStateProvider(Network.TEST));
         services.put("BCH_MAIN", new BCHStateProvider(Network.MAIN));
         services.put("BCH_TEST", new BCHStateProvider(Network.TEST));
-        services.put("BSV_MAIN", new BSVStateProvider(Network.MAIN));
+        BSVStateProvider bsv = new BSVStateProvider(Network.MAIN);
+        services.put("BSV", bsv);
+        services.put("BSV_MAIN", bsv);
         services.put("BSV_TEST", new BSVStateProvider(Network.TEST));
         services.put("USDT_MAIN", new USDTStateProvider(Network.MAIN));
         services.put("USDT_TEST", new USDTStateProvider(Network.TEST));
