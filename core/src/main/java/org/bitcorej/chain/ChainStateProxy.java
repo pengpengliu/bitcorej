@@ -17,6 +17,7 @@ import org.bitcorej.chain.eos.ABBCStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.chain.grs.GRSStateProvider;
 import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
 import org.bitcorej.chain.iris.IRISStateProvider;
@@ -135,6 +136,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         PLCStateProvider plc = new PLCStateProvider(Network.MAIN);
         services.put("PLC", plc);
         services.put("PLC_MAIN", plc);
+        GRSStateProvider grs = new GRSStateProvider(Network.MAIN);
+        services.put("GRS", grs);
+        services.put("GRS_MAIN", grs);
     }
 
     private ChainState provider;
