@@ -228,6 +228,11 @@ public class CKBStateProvider implements ChainState, UTXOState {
     }
 
     @Override
+    public String signSegWitTransaction(String rawTx, List<String> keys) {
+        return null;
+    }
+
+    @Override
     public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
         return encodeTransaction(utxos, recipients, changeAddress, fee, DECIMALS);
     }

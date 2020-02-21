@@ -14,6 +14,8 @@ public interface UTXOState {
     String calcSegWitAddress(String legacyAddress);
     String generateP2PKHScript(String address);
 
+    String signSegWitTransaction(String rawTx, List<String> keys);
+
     String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee);
     String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals);
 }

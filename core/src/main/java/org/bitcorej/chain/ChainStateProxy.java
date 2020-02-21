@@ -238,6 +238,14 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
     }
 
     @Override
+    public String signSegWitTransaction(String rawTx, List<String> keys) {
+        if (this.provider instanceof UTXOState) {
+            return ((UTXOState) this.provider).signSegWitTransaction(rawTx, keys);
+        }
+        return null;
+    }
+
+    @Override
     public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
         if (this.provider instanceof UTXOState) {
             return ((UTXOState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee);
