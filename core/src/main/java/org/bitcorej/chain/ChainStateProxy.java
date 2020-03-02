@@ -1,5 +1,6 @@
 package org.bitcorej.chain;
 
+import org.bitcorej.chain.ada.CardanoStateProvider;
 import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bhd.BHDStateProvider;
 import org.bitcorej.chain.binance.BinanceStateProvider;
@@ -139,6 +140,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         GRSStateProvider grs = new GRSStateProvider(Network.MAIN);
         services.put("GRS", grs);
         services.put("GRS_MAIN", grs);
+        CardanoStateProvider ada = new CardanoStateProvider();
+        services.put("ADA", ada);
+        services.put("ADA_MAIN", ada);
     }
 
     private ChainState provider;
