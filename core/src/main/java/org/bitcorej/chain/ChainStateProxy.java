@@ -42,6 +42,7 @@ import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
 import org.bitcorej.chain.vsys.VSYSStateProvider;
 import org.bitcorej.chain.xmr.XMRStateProvider;
+import org.bitcorej.chain.xns.XNSStateProvider;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.chain.zcl.ZCLStateProvider;
 import org.bitcorej.core.Network;
@@ -143,6 +144,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         CardanoStateProvider ada = new CardanoStateProvider();
         services.put("ADA", ada);
         services.put("ADA_MAIN", ada);
+        XNSStateProvider xns = new XNSStateProvider();
+        services.put("XNS", xns);
+        services.put("XNS_MAIN", xns);
     }
 
     private ChainState provider;
