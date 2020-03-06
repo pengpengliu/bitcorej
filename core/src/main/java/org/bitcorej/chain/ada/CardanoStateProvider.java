@@ -1,6 +1,5 @@
 package org.bitcorej.chain.ada;
 
-import org.bitcoinj.script.Script;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
@@ -12,10 +11,10 @@ import org.bitcorej.utils.NumericUtil;
 import com.raugfer.crypto.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.whispersystems.curve25519.Curve25519;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -33,11 +32,8 @@ public class CardanoStateProvider implements ChainState, UTXOState {
 
     @Override
     public KeyPair generateKeyPair() {
-        // 1. generate random hash, lower than 2^252 (this would be our secret key)
-        SecureRandom random = new SecureRandom();
-        byte[] bytes = new byte[32];
-        random.nextBytes(bytes);
-        return generateKeyPair(NumericUtil.bytesToHex(bytes));
+        byte[] privateKey = Curve25519.getInstance(Curve25519.BEST).generateKeyPair().getPrivateKey();
+        return generateKeyPair(NumericUtil.bytesToHex(privateKey));
     }
 
     @Override
