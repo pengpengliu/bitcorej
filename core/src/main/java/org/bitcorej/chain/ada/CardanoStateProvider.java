@@ -82,7 +82,7 @@ public class CardanoStateProvider implements ChainState, UTXOState {
         String txid = transaction.txnid(txn, "cardano", false);
         JSONObject packedTx = new JSONObject();
         packedTx.put("txid", txid);
-        packedTx.put("signedTx", Base64.getEncoder().encodeToString(signedtxn));
+        packedTx.put("raw", Base64.getEncoder().encodeToString(signedtxn));
         return packedTx.toString();
     }
 
