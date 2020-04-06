@@ -23,7 +23,7 @@ dependencies {
     implementation 'org.json:json:20180813'
     implementation 'com.google.code.gson:gson:2.8.1'
     implementation 'com.squareup.retrofit2:converter-jackson:2.5.0'
-    implementation 'com.github.pengpengliu:eos4j:v1.0'
+    implementation 'com.github.pengpengliu:eos4j:v1.0.2'
     implementation 'com.github.pengpengliu.ripple-lib-java:ripple-core:v1.0'
     implementation 'com.github.stellar:java-stellar-sdk:0.6.0'
     implementation 'io.nebulas:nebulas:0.2'
