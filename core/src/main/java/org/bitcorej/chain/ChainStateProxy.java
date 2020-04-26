@@ -16,6 +16,7 @@ import org.bitcorej.chain.dash.DashStateProvider;
 import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.ABBCStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
+import org.bitcorej.chain.eos.YTAStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.grs.GRSStateProvider;
@@ -74,6 +75,7 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
         services.put("EOS_MAIN", new EOSStateProvider(Network.MAIN));
         services.put("EOS_TEST", new EOSStateProvider(Network.TEST));
         services.put("ABBC", new ABBCStateProvider());
+        services.put("YTA", new YTAStateProvider());
         services.put("XRP", new RippleStateProvider());
         services.put("XLM_MAIN", new StellarStateProvider(Network.MAIN));
         services.put("XLM_TEST", new StellarStateProvider(Network.TEST));
