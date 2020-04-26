@@ -3,12 +3,13 @@ package org.bitcorej.chain.xmr;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
+import org.bitcorej.chain.XMRState;
 import org.bitcorej.utils.NumericUtil;
 
 import java.util.List;
 import java.util.Random;
 
-public class XMRStateProvider implements ChainState {
+public class XMRStateProvider implements ChainState, XMRState {
     @Override
     public KeyPair generateKeyPair(String secret) {
         WalletToolsXMR wt = new WalletToolsXMR();

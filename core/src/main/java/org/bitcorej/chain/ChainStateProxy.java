@@ -53,7 +53,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChainStateProxy implements ChainState, UTXOState, USDTState {
+public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRState {
     private static HashMap<String, ChainState> services;
 
     static
@@ -287,6 +287,14 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState {
     public List<Recipient> buildRecipients(String from, String to, BigDecimal amount, int propertyId) {
         if (this.provider instanceof USDTState) {
             return ((USDTState) this.provider).buildRecipients(from, to, amount, propertyId);
+        }
+        return null;
+    }
+
+    @Override
+    public String generateViewKey(String secret) {
+        if (this.provider instanceof XMRState) {
+            return ((XMRState) this.provider).generateViewKey(secret);
         }
         return null;
     }
