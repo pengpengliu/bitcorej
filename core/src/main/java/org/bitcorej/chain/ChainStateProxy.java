@@ -46,6 +46,7 @@ import org.bitcorej.chain.vet.VETStateProvider;
 import org.bitcorej.chain.vsys.VSYSStateProvider;
 import org.bitcorej.chain.xmr.XMRStateProvider;
 import org.bitcorej.chain.xns.XNSStateProvider;
+import org.bitcorej.chain.xtz.XTZStateProvider;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.chain.zcl.ZCLStateProvider;
 import org.bitcorej.core.Network;
@@ -157,6 +158,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         BIPStateProvider bip = new BIPStateProvider();
         services.put("BIP", bip);
         services.put("BIP_MAIN", bip);
+        XTZStateProvider xtz = new XTZStateProvider();
+        services.put("XTZ", xtz);
+        services.put("XTZ_MAIN", xtz);
     }
 
     private ChainState provider;
