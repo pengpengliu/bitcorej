@@ -38,6 +38,7 @@ import org.bitcorej.chain.pi.PIStateProvider;
 import org.bitcorej.chain.plc.PLCStateProvider;
 import org.bitcorej.chain.qtum.QTUMStateProvider;
 import org.bitcorej.chain.ripple.RippleStateProvider;
+import org.bitcorej.chain.rvn.RVNStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
 import org.bitcorej.chain.stg.STGStateProvider;
 import org.bitcorej.chain.trx.TRXStateProvider;
@@ -161,6 +162,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         XTZStateProvider xtz = new XTZStateProvider();
         services.put("XTZ", xtz);
         services.put("XTZ_MAIN", xtz);
+        RVNStateProvider rvn = new RVNStateProvider(Network.MAIN);
+        services.put("RVN", rvn);
+        services.put("RVN_MAIN", rvn);
     }
 
     private ChainState provider;
