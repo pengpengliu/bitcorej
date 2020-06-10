@@ -14,6 +14,7 @@ import org.bitcorej.chain.ckb.CKBStateProvider;
 import org.bitcorej.chain.cosmos.CosmosStateProvider;
 import org.bitcorej.chain.czz.CZZStateProvider;
 import org.bitcorej.chain.dash.DashStateProvider;
+import org.bitcorej.chain.divi.DIVIStateProvider;
 import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.ABBCStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
@@ -169,6 +170,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         RVCStateProvider rvc = new RVCStateProvider(Network.MAIN);
         services.put("RVC", rvc);
         services.put("RVC_MAIN", rvc);
+        DIVIStateProvider divi = new DIVIStateProvider(Network.MAIN);
+        services.put("DIVI", divi);
+        services.put("DIVI_MAIN", divi);
     }
 
     private ChainState provider;
