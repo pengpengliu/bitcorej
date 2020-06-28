@@ -20,7 +20,7 @@ public class StellarStateProvider implements ChainState {
         this.network = network;
     }
 
-    private void switchNetwork() {
+    protected void switchNetwork() {
         switch (network) {
             case MAIN:
                 Network.usePublicNetwork();
@@ -100,7 +100,7 @@ public class StellarStateProvider implements ChainState {
                 .addOperation(op)
                 .setOperationFee(fee)
                 .addMemo(Memo.text(memo))
-                .setTimeout(10 * 1000L)
+                .setTimeout(0)
                 .build();
         transaction.sign(source);
         JSONObject packedTx = new JSONObject();
