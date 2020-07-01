@@ -37,4 +37,22 @@ public class HashUtil {
         byte[] blake2b = hash(message, ofs, len, HashUtil.BLAKE2B256);
         return hash(blake2b, 0, blake2b.length, HashUtil.KECCAK256);
     }
+
+    public static byte[] hashB(byte[] message) {
+        return hash(message, 0, message.length, HashUtil.BLAKE2B256);
+    }
+
+    public static byte[] hashB(byte[] message, int ofs, int len) {
+        return hash(message, ofs, len, HashUtil.BLAKE2B256);
+    }
+
+    public static byte[] doubleHashB(byte[] message) {
+        byte[] blake2b = hash(message, 0, message.length, HashUtil.BLAKE2B256);
+        return hash(blake2b, 0, blake2b.length, HashUtil.BLAKE2B256);
+    }
+
+    public static byte[] doubleHashB(byte[] message, int ofs, int len) {
+        byte[] blake2b = hash(message, ofs, len, HashUtil.BLAKE2B256);
+        return hash(blake2b, 0, blake2b.length, HashUtil.BLAKE2B256);
+    }
 }
