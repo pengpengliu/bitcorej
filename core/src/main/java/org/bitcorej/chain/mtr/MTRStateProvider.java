@@ -6,23 +6,29 @@ import com.vechain.thorclient.utils.RLPUtils;
 import com.vechain.thorclient.utils.crypto.ECDSASign;
 import com.vechain.thorclient.utils.crypto.ECKeyPair;
 import com.vechain.thorclient.utils.rlp.*;
+import org.bitcoinj.core.ECKey;
 import org.bitcorej.chain.ChainState;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.Transaction;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.Sign;
+import org.web3j.utils.Numeric;
 
 import java.util.List;
 
 public class MTRStateProvider implements ChainState {
     @Override
     public KeyPair generateKeyPair(String secret) {
-        return null;
+        ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(secret));
+        String address = Numeric.prependHexPrefix(Keys.getAddress(Sign.publicKeyFromPrivate(ecKey.getPrivKey())));
+        return new KeyPair(ecKey.getPrivateKeyAsHex(), address);
     }
 
     @Override
     public KeyPair generateKeyPair() {
-        return null;
+        return this.generateKeyPair(new ECKey().getPrivateKeyAsHex());
     }
 
     @Override
