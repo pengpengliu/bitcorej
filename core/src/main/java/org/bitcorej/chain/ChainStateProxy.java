@@ -30,6 +30,7 @@ import org.bitcorej.chain.ltc.LitecoinStateProvider;
 import org.bitcorej.chain.luna.LUNAStateProvider;
 import org.bitcorej.chain.mch.MCHStateProvider;
 import org.bitcorej.chain.meta.METAStateProvider;
+import org.bitcorej.chain.mtr.MTRStateProvider;
 import org.bitcorej.chain.naka.NAKAStateProvider;
 import org.bitcorej.chain.nas.NASStateProvider;
 import org.bitcorej.chain.nrg.NRGStateProvider;
@@ -181,6 +182,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         PMEERStateProvider pmeer = new PMEERStateProvider(Network.MAIN);
         services.put("PMEER", pmeer);
         services.put("PMEER_MAIN", pmeer);
+        MTRStateProvider mtr = new MTRStateProvider();
+        services.put("MTR", mtr);
+        services.put("MTR_MAIN", mtr);
     }
 
     private ChainState provider;
