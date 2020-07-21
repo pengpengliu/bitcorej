@@ -1,6 +1,7 @@
 package org.bitcorej.chain;
 
 import org.bitcorej.chain.ada.CardanoStateProvider;
+import org.bitcorej.chain.adk.ADKStateProvider;
 import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bhd.BHDStateProvider;
 import org.bitcorej.chain.binance.BinanceStateProvider;
@@ -189,6 +190,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         SOLStateProvider sol = new SOLStateProvider();
         services.put("SOL", sol);
         services.put("SOL_MAIN", sol);
+        ADKStateProvider adk = new ADKStateProvider();
+        services.put("ADK", adk);
+        services.put("ADK_MAIN", adk);
     }
 
     private ChainState provider;
