@@ -81,7 +81,7 @@ public class ADKStateProvider implements ChainState {
                 for (int j = 0; j < bundle.length(); j++) {
                     if (bundle.getJSONObject(j).getString("address").equals(thisAddress) && bundle.getJSONObject(j).getLong("value") == 0) {
                         int[] secondFragment = getSliceOfArray(key, 6561, 2 * 6561);
-                        int[] secondBundleFragment = getSliceOfArray(key,27, 27 * 2);
+                        int[] secondBundleFragment = getSliceOfArray(normalizedBundleHash,27, 27 * 2);
                         int[] secondSignedFragment = ISS.signatureFragment(secondBundleFragment, secondFragment);
                         bundle.getJSONObject(j).put("signatureMessageFragment", Converter.trytes(secondSignedFragment));
                     }
