@@ -19,6 +19,7 @@ import org.bitcorej.chain.divi.DIVIStateProvider;
 import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
 import org.bitcorej.chain.eos.ABBCStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
+import org.bitcorej.chain.eos.FIOStateProvider;
 import org.bitcorej.chain.eos.YTAStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
@@ -193,6 +194,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         ADKStateProvider adk = new ADKStateProvider();
         services.put("ADK", adk);
         services.put("ADK_MAIN", adk);
+        FIOStateProvider fio = new FIOStateProvider();
+        services.put("FIO", fio);
+        services.put("FIO_MAIN", fio);
     }
 
     private ChainState provider;
