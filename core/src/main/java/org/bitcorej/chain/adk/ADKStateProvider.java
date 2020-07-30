@@ -57,18 +57,27 @@ public class ADKStateProvider implements ChainState {
         return null;
     }
 
+    private int[] selectPrivateKeys(String address, List<String> keys) {
+        for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
+            if (address.equals(generateKeyPair(key).getPublic().substring(0, 81))) {
+                int[] seed = Converter.trits(key);
+                int[] subseed = ISS.subseed(seed, 0);
+                int[] subkey = ISS.key(subseed, 2);
+                return subkey;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
-        String secret = keys.get(0);
-        int[] seed = Converter.trits(secret);
-        int[] subseed = ISS.subseed(seed, 0);
-        int[] key = ISS.key(subseed, 2);
-
         JSONArray bundle = new JSONArray(rawTx);
 
         for (int i = 0; i < bundle.length(); i++) {
             if (bundle.getJSONObject(i).getLong("value") < 0) {
                 String thisAddress = bundle.getJSONObject(i).getString("address");
+                int[] key = selectPrivateKeys(thisAddress, keys);
                 JSONArray normalizedBundleHashArray = bundle.getJSONObject(i).getJSONArray("normalizedBundleHash");
                 int[] normalizedBundleHash = new int[normalizedBundleHashArray.length()];
                 for (int j = 0; j < normalizedBundleHashArray.length(); j++) {
