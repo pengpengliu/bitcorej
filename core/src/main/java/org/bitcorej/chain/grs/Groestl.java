@@ -1,8 +1,6 @@
 package org.bitcorej.chain.grs;
 
 public class Groestl {
-    private static final Groestl512 digestGroestl = new Groestl512();
-
     public static byte[] digest(byte[] input, int offset, int length)
     {
         //return groestl(input, offset, length);
@@ -67,6 +65,7 @@ public class Groestl {
 
     static byte [] groestl(byte header[], int offset, int length)
     {
+        Groestl512 digestGroestl = new Groestl512();
         digestGroestl.reset();
         digestGroestl.update(header, offset, length);
         byte [] hash512 = digestGroestl.digest();
