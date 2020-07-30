@@ -9,6 +9,7 @@ import org.bitcoinj.script.ScriptOpCodes;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.core.Network;
+import org.bitcorej.utils.ByteUtil;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
 
@@ -57,13 +58,11 @@ public class GRSStateProvider extends BitcoinStateProvider {
     public KeyPair generateKeyPair(String secret) {
         ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(secret));
         // A stringified buffer is:
-        // 1 byte version + data bytes + 4 bytes check code (a truncated hash)
         byte[] payload = ecKey.getPubKeyHash();
-        byte[] addressBytes = new byte[1 + payload.length + 4];
-        addressBytes[0] = (byte) this.params.getAddressHeader();
-        System.arraycopy(payload, 0, addressBytes, 1, payload.length);
+        byte[] addressBytes = new byte[]{(byte) this.params.getAddressHeader()};
+        addressBytes = ByteUtil.concat(addressBytes, payload);
         byte[] checksum = Groestl.digest(addressBytes, 0, payload.length + 1);
-        System.arraycopy(checksum, 0, addressBytes, payload.length + 1, 4);
+        addressBytes = ByteUtil.concat(addressBytes, new byte[]{checksum[0], checksum[1], checksum[2], checksum[3]});
         String address = Base58.encode(addressBytes);
         return new KeyPair(ecKey.getPrivateKeyAsHex(), address);
     }
