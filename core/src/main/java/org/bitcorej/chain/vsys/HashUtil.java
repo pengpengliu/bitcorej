@@ -9,6 +9,7 @@ public class HashUtil {
     public static final ThreadLocal<Digest> BLAKE2B256 = new ThreadLocal<Digest>();
     public static final ThreadLocal<Digest> KECCAK256 = new ThreadLocal<Digest>();
     public static final ThreadLocal<Digest> SHA256 = new ThreadLocal<Digest>();
+    public static final ThreadLocal<Digest> BLAKE2B160 = new ThreadLocal<Digest>();
 
     private static Digest digest(ThreadLocal<Digest> cache) {
         Digest d = cache.get();
@@ -19,6 +20,8 @@ public class HashUtil {
                 d = new KeccakDigest(256);
             } else if (cache == SHA256) {
                 d = new SHA256Digest();
+            } else if (cache == BLAKE2B160) {
+                d = new Blake2bDigest(160);
             }
             cache.set(d);
         }
@@ -40,6 +43,18 @@ public class HashUtil {
 
     public static byte[] hashB(byte[] message) {
         return hash(message, 0, message.length, HashUtil.BLAKE2B256);
+    }
+
+    public static byte[] hashB160(byte[] message) {
+        return hash(message, 0, message.length, HashUtil.BLAKE2B160);
+    }
+
+    public static byte[] hashB(byte[] message, int size) {
+        Digest d = new Blake2bDigest(size);
+        byte[] res = new byte[d.getDigestSize()];
+        d.update(message, 0, message.length);
+        d.doFinal(res, 0);
+        return res;
     }
 
     public static byte[] hashB(byte[] message, int ofs, int len) {
