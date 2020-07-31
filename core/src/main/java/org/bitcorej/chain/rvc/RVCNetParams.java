@@ -24,5 +24,10 @@ public class RVCNetParams extends AbstractBitcoinNetParams {
     public String getPaymentProtocolId() {
         return "main";
     }
+
+    @Override
+    public boolean hasMaxMoney() {
+        return false;
+    }
 }
 
