@@ -27,7 +27,7 @@ public class ZcashStateProvider extends BitcoinStateProvider {
 
     private static final long VERSION_GROUP_ID = 2301567109L; // 0x03C48270 (63210096) for overwinter and 0x892F2085 (2301567109) for sapling
 
-    protected long consensusBranchId;
+    public long consensusBranchId;
 
     public ZcashStateProvider(Network network) {
         super(network);
@@ -45,7 +45,7 @@ public class ZcashStateProvider extends BitcoinStateProvider {
 
         super.network = network;
         // consensusBranchId = 1991772603l; // 0x76b809bb (old Sapling branch id). Blossom branch id becomes effective after block 653600
-        consensusBranchId = 0x2bb40e60;
+        consensusBranchId = 0xf5b9230b;
     }
 
     public String generateP2PKHScript(String address) {
