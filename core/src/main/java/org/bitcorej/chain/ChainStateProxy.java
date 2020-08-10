@@ -23,6 +23,7 @@ import org.bitcorej.chain.eos.FIOStateProvider;
 import org.bitcorej.chain.eos.YTAStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
+import org.bitcorej.chain.fil.FILStateProvider;
 import org.bitcorej.chain.grs.GRSStateProvider;
 import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
@@ -197,6 +198,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         FIOStateProvider fio = new FIOStateProvider();
         services.put("FIO", fio);
         services.put("FIO_MAIN", fio);
+        FILStateProvider fil = new FILStateProvider();
+        services.put("FIL", fil);
+        services.put("FIL_MAIN", fil);
     }
 
     private ChainState provider;
