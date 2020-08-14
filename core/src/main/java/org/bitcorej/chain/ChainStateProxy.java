@@ -17,6 +17,7 @@ import org.bitcorej.chain.czz.CZZStateProvider;
 import org.bitcorej.chain.dash.DashStateProvider;
 import org.bitcorej.chain.divi.DIVIStateProvider;
 import org.bitcorej.chain.dogecoin.DogecoinStateProvider;
+import org.bitcorej.chain.dot.DOTStateProvider;
 import org.bitcorej.chain.eos.ABBCStateProvider;
 import org.bitcorej.chain.eos.EOSStateProvider;
 import org.bitcorej.chain.eos.FIOStateProvider;
@@ -201,6 +202,12 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         FILStateProvider fil = new FILStateProvider();
         services.put("FIL", fil);
         services.put("FIL_MAIN", fil);
+        DOTStateProvider dot = new DOTStateProvider();
+        services.put("DOT", dot);
+        services.put("DOT_MAIN", dot);
+        DOTStateProvider wnd = new DOTStateProvider(Network.TEST);
+        services.put("WND", wnd);
+        services.put("DOT_WND", wnd);
     }
 
     private ChainState provider;
