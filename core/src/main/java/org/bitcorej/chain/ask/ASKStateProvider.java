@@ -1,11 +1,11 @@
 package org.bitcorej.chain.ask;
 
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
-import org.bitcorej.chain.naka.TransactionEncoder;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
+import org.web3j.crypto.TransactionEncoder;
 import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
