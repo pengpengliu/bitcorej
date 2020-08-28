@@ -24,7 +24,7 @@ public class ASKStateProvider extends EthereumStateProvider {
         RawTransaction tx = RawTransaction.createTransaction(nonce,
                 gasPrice, gasLimit, to, value, data);
 
-        String signedTx = NumericUtil.bytesToHex(TransactionEncoder.signMessage(tx, 222L, Credentials.create(keys.get(0))));
+        String signedTx = NumericUtil.bytesToHex(TransactionEncoder.signMessage(tx, (byte) 222, Credentials.create(keys.get(0))));
 
         TransactionEncoder.encode(tx);
 
