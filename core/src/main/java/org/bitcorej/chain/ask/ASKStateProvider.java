@@ -1,11 +1,11 @@
 package org.bitcorej.chain.ask;
 
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
-import org.bitcorej.chain.naka.RawTransaction;
 import org.bitcorej.chain.naka.TransactionEncoder;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.RawTransaction;
 import org.web3j.utils.Numeric;
 
 import java.math.BigInteger;
@@ -22,7 +22,7 @@ public class ASKStateProvider extends EthereumStateProvider {
         String to = jsonObject.getString("to");
         String data = jsonObject.getString("data");
         RawTransaction tx = RawTransaction.createTransaction(nonce,
-                gasPrice, gasLimit, to, value, data, null, null, null);
+                gasPrice, gasLimit, to, value, data);
 
         String signedTx = NumericUtil.bytesToHex(TransactionEncoder.signMessage(tx, 222L, Credentials.create(keys.get(0))));
 
