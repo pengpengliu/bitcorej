@@ -10,6 +10,7 @@ import org.bitcorej.chain.bip.BIPStateProvider;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
 import org.bitcorej.chain.bitcoin.Recipient;
 import org.bitcorej.chain.bitcoin.UnspentOutput;
+import org.bitcorej.chain.bsc.BSCStateProvider;
 import org.bitcorej.chain.bsv.BSVStateProvider;
 import org.bitcorej.chain.cent.CENTStateProvider;
 import org.bitcorej.chain.ckb.CKBStateProvider;
@@ -210,6 +211,7 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         services.put("WND", wnd);
         services.put("DOT_WND", wnd);
         services.put("ASK", new ASKStateProvider());
+        services.put("BSC", new BSCStateProvider());
     }
 
     private ChainState provider;
