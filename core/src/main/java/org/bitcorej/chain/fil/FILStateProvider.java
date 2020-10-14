@@ -47,12 +47,11 @@ public class FILStateProvider implements ChainState {
     public String signRawTransaction(String rawTx, List<String> keys) {
         JSONObject rawTxJSON = new JSONObject(rawTx);
 
-        String messageWithParamsHexValue =  rawTxJSON.getString("MessageWithParamsHexValue"); //"89005501e6734efa6a8e0f896d3fe8c7cc44d5fd0cc25bc555011a426debaf05e08385306b79c762df09a12bdb060149008ac7230489e8000049000de0b6b3a76400001903e80040";
+        String messageWithParamsHexValue =  rawTxJSON.getString("MessageWithParamsHexValue");
         byte[] cidPrefix = NumericUtil.hexToBytes("0171a0e40220");
         byte[] hash = HashUtil.hashB(NumericUtil.hexToBytes(messageWithParamsHexValue), 256);
         byte[] cid = ByteUtil.concat(cidPrefix, hash);
         byte[] toSign = HashUtil.hashB(cid, 256);
-
         ECKey key = ECKey.fromPrivate(NumericUtil.hexToBytes(keys.get(0)), false);
         byte[] pub = key.getPubKey();
         ECKey.ECDSASignature sig = key.sign(Sha256Hash.wrap(toSign));
@@ -65,12 +64,11 @@ public class FILStateProvider implements ChainState {
                 break;
             }
         }
-
         byte[] signature = ByteUtil.concat(sig.r.toByteArray(), sig.s.toByteArray());
         signature = ByteUtil.concat(signature, BigInteger.valueOf(recId).toByteArray());
         JSONObject signatureJSON = new JSONObject();
         signatureJSON.put("Type", 1);
-        signatureJSON.put("Data", Base64.getEncoder().encodeToString(signature));
+        signatureJSON.put("Data", Base64.getEncoder().encodeToString(ByteUtil.trimLeadingZeroes(signature)));
         rawTxJSON.put("Signature", signatureJSON);
         rawTxJSON.remove("MessageWithParamsHexValue");
         return rawTxJSON.toString();
