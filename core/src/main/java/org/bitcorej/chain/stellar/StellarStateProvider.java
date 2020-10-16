@@ -90,7 +90,7 @@ public class StellarStateProvider implements ChainState {
         } else if (type.equals("create_account")) {
             op = new CreateAccountOperation.Builder(destination, amount.toString()).build();
         } else if (type.equals("change_trust")) {
-            op = new ChangeTrustOperation.Builder(new AssetTypeCreditAlphaNum4("LFEC", destination), "900000000000.0000000")
+            op = new ChangeTrustOperation.Builder(new AssetTypeCreditAlphaNum4(jsonObject.getString("asset"), destination), "900000000000.0000000")
                     .setSourceAccount(source)
                     .build();
         } else {
