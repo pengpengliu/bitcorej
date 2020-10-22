@@ -57,6 +57,7 @@ import org.bitcorej.chain.stg.STGStateProvider;
 import org.bitcorej.chain.trx.TRXStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
+import org.bitcorej.chain.vrsc.VRSCStateProvider;
 import org.bitcorej.chain.vsys.VSYSStateProvider;
 import org.bitcorej.chain.xmr.XMRStateProvider;
 import org.bitcorej.chain.xns.XNSStateProvider;
@@ -216,6 +217,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         BTCVStateProvider btcv = new BTCVStateProvider(Network.MAIN);
         services.put("BTCV", btcv);
         services.put("BTCV_MAIN", btcv);
+        VRSCStateProvider vrsc = new VRSCStateProvider(Network.MAIN);
+        services.put("VRSC", vrsc);
+        services.put("VRSC_MAIN", vrsc);
     }
 
     private ChainState provider;
