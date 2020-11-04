@@ -66,7 +66,8 @@ public class BIPStateProvider implements ChainState {
         // gasPrice
         values.add(RlpString.create(gasPrice));
         // gasCoin
-        values.add(RlpString.create(strrpad(10, "BIP")));
+        // values.add(RlpString.create(strrpad(10, "BIP")));
+        values.add(RlpString.create(0));
         // type: SEND
         values.add(RlpString.create(BigInteger.valueOf(1)));
         // data
@@ -106,7 +107,8 @@ public class BIPStateProvider implements ChainState {
     byte[] encodeSendCoin(String to, BigInteger value) {
         List<RlpType> values = new ArrayList<>();
         // coin
-        values.add(RlpString.create(strrpad(10, "BIP")));
+        // values.add(RlpString.create(strrpad(10, "BIP")));
+        values.add(RlpString.create(0));
         // to
         values.add(RlpString.create(Numeric.hexStringToByteArray(to.substring(2))));
         // value
