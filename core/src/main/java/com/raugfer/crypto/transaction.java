@@ -1,12 +1,7 @@
 package com.raugfer.crypto;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class transaction {
 
@@ -937,32 +932,41 @@ public class transaction {
                 String txnid = in.get("txnid");
                 BigInteger index = in.get("index", BigInteger.ZERO);
                 Object pair = new Object[]{ binint.h2b(txnid), index };
-                Object item = new Object[]{ BigInteger.ZERO, new cbor.Tag(BigInteger.valueOf(24), cbor.dumps(pair)) };
-                inputs.add(item);
+                // Object item = new Object[]{ BigInteger.ZERO, new cbor.Tag(BigInteger.valueOf(24), cbor.dumps(pair)) };
+                inputs.add(pair);
             }
             dict[] outs = fields.get("outputs");
             List<Object> outputs = new ArrayList<>();
+
             for (dict out : outs) {
                 BigInteger amount = out.get("amount", BigInteger.ZERO);
                 String address = out.get("address");
-                Object struct = cbor.loads(base58.decode(address));
-                Object item = new Object[]{ struct, amount };
+//                Object struct = cbor.loads(base58.decode(address));
+                Object item = new Object[]{ base58.decode(address), amount };
                 outputs.add(item);
             }
-            Object data = new Object[]{ inputs, outputs, new HashMap<>() };
+            Map<Object, Object> base = new HashMap();
+            base.put(BigInteger.ZERO, inputs);
+            base.put(BigInteger.ONE, outputs);
+            base.put(BigInteger.valueOf(2), fields.get("fee"));
+            base.put(BigInteger.valueOf(3), fields.get("bestSlot"));
+            Object data;
             if (fields.has("witnesses")) {
                 dict[] wits = fields.get("witnesses");
+                Map<Object, Object> witnessesMap = new HashMap();
                 Object[] witnesses = new Object[wits.length];
                 for (int i = 0; i < wits.length; i++) {
                     dict wit = wits[i];
                     String publickey = wit.get("publickey");
                     String chaincode = wit.get("chaincode");
                     byte[] signature = wit.get("signature");
-                    Object pair = new Object[]{ binint.h2b(publickey + chaincode), signature };
-                    Object item = new Object[]{ BigInteger.ZERO, new cbor.Tag(BigInteger.valueOf(24), cbor.dumps(pair)) };
+                    Object item = new Object[]{ binint.h2b(publickey), signature, binint.h2b(chaincode), binint.h2b("a0") };
                     witnesses[i] = item;
                 }
-                data = new Object[]{ data, witnesses };
+                witnessesMap.put(BigInteger.valueOf(2), witnesses);
+                data = new Object[]{ base, witnessesMap, null };
+            } else {
+                data = base;
             }
             return cbor.dumps(data);
         }
@@ -1681,7 +1685,8 @@ public class transaction {
         }
         if (fmt.equals("cbor")) {
             dict fields = new dict();
-            Object[] data = (Object[]) cbor.loads(txn);
+            Object raw = cbor.loads(txn);
+            Object[] data = raw instanceof Object[] ? (Object[]) raw : new Object[]{ raw, null, null};
             if (data.length == 2) {
                 Object[] witnesses = (Object[]) data[1];
                 data = (Object[]) data[0];
@@ -1705,46 +1710,51 @@ public class transaction {
                 }
                 fields.put("witnesses", wits);
             }
-            List<Object> inputs = (List<Object>) data[0];
-            dict[] ins = new dict[inputs.size()];
-            for (int i = 0; i < inputs.size(); i++) {
-                Object[] input = (Object[]) inputs.get(i);
+            Map<Object, Object> base = (Map) data[0];
+            Object[] values = base.values().toArray();
+            Object[] inputs = (Object[]) values[0];
+            dict[] ins = new dict[inputs.length];
+            for (int i = 0; i < inputs.length; i++) {
+                Object[] input = (Object[]) inputs[i];
                 if (input.length != 2) throw new IllegalArgumentException("Invalid input");
-                BigInteger typ = (BigInteger) input[0];
-                cbor.Tag obj = (cbor.Tag) input[1];
-                if (typ.compareTo(BigInteger.ZERO) != 0) throw new IllegalArgumentException("Unknown type");
-                if (obj.tag.compareTo(BigInteger.valueOf(24)) != 0) throw new IllegalArgumentException("Unknown tag");
-                Object[] r = (Object[]) cbor.loads((byte[]) obj.value);
-                byte[] b = (byte[]) r[0];
-                BigInteger index = (BigInteger) r[1];
+//                BigInteger typ = (BigInteger) input[0];
+//                cbor.Tag obj = (cbor.Tag) input[1];
+//                if (typ.compareTo(BigInteger.ZERO) != 0) throw new IllegalArgumentException("Unknown type");
+//                if (obj.tag.compareTo(BigInteger.valueOf(24)) != 0) throw new IllegalArgumentException("Unknown tag");
+//                Object[] r = (Object[]) cbor.loads((byte[]) obj.value);
+//                byte[] b = (byte[]) r[0];
+//                BigInteger index = (BigInteger) r[1];
                 dict in = new dict();
+                byte[] b = (byte[]) input[0];
                 in.put("txnid", binint.b2h(b));
-                in.put("index", index);
+                in.put("index", input[1]);
                 ins[i] = in;
             }
             fields.put("inputs", ins);
-            List<Object> outputs = (List<Object>) data[1];
-            dict[] outs = new dict[outputs.size()];
-            for (int i = 0; i < outputs.size(); i++) {
-                Object[] output = (Object[]) outputs.get(i);
+            Object[] outputs = (Object[]) base.values().toArray()[1];
+            dict[] outs = new dict[outputs.length];
+            for (int i = 0; i < outputs.length; i++) {
+                Object[] output = (Object[]) outputs[i];
                 if (output.length != 2) throw new IllegalArgumentException("Invalid input");
-                Object[] struct = (Object[]) output[0];
+                byte[] address_bytes = (byte[]) output[0];
                 BigInteger amount = (BigInteger) output[1];
-                if (struct.length != 2) throw new IllegalArgumentException("Invalid input");
-                cbor.Tag obj = (cbor.Tag) struct[0];
-                BigInteger checksum = (BigInteger) struct[1];
-                if (obj.tag.compareTo(BigInteger.valueOf(24)) != 0) throw new IllegalArgumentException("Unknown tag");
-                BigInteger expected_checksum = binint.b2n(crc32.crc32xmodem((byte[]) obj.value));
-                if (checksum.compareTo(expected_checksum) != 0) throw new IllegalArgumentException("Inconsistent checksum");
-                String address = base58.encode(cbor.dumps(struct));
+                // if (struct.length != 2) throw new IllegalArgumentException("Invalid input");
+                // cbor.Tag obj = (cbor.Tag) struct[0];
+                // BigInteger checksum = (BigInteger) struct[1];
+                // if (obj.tag.compareTo(BigInteger.valueOf(24)) != 0) throw new IllegalArgumentException("Unknown tag");
+                // BigInteger expected_checksum = binint.b2n(crc32.crc32xmodem((byte[]) obj.value));
+                // if (checksum.compareTo(expected_checksum) != 0) throw new IllegalArgumentException("Inconsistent checksum");
+                String address = base58.encode(address_bytes);
                 dict out = new dict();
                 out.put("address", address);
                 out.put("amount", amount);
                 outs[i] = out;
             }
             fields.put("outputs", outs);
-            Map<Object, Object> attrs = (Map<Object, Object>) data[2];
-            if (attrs.size() > 0) throw new IllegalArgumentException("Unsupported attributes");
+            fields.put("fee", base.values().toArray()[2]);
+            fields.put("bestSlot", base.values().toArray()[3]);
+            // Map<Object, Object> attrs = (Map<Object, Object>) data[2];
+            // if (attrs.size() > 0) throw new IllegalArgumentException("Unsupported attributes");
             return fields;
         }
         if (fmt.equals("protobuf")) {

@@ -1,9 +1,6 @@
 package org.bitcorej.chain.ada;
 
-import org.bitcorej.chain.ChainState;
-import org.bitcorej.chain.KeyPair;
-import org.bitcorej.chain.Transaction;
-import org.bitcorej.chain.UTXOState;
+import org.bitcorej.chain.*;
 import org.bitcorej.chain.bitcoin.Recipient;
 import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.utils.NumericUtil;
@@ -19,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-public class CardanoStateProvider implements ChainState, UTXOState {
+public class CardanoStateProvider implements ChainState, UTXOState, ADATxBuilderState {
     protected static final BigDecimal DECIMALS = new BigDecimal(10).pow(6);
     protected final static BigDecimal DUST_THRESHOLD = new BigDecimal(10000);
 
@@ -70,7 +67,7 @@ public class CardanoStateProvider implements ChainState, UTXOState {
         for (int i = 0; i < inputs.length; i++) {
             String privatekey = selectPrivateKeys(addresses.getString(i), keys);
             String publickey = wallet.publickey_from_privatekey(privatekey, "cardano", false);
-            byte[] signature = signing.signature_create(privatekey, txn, null, "cardano", false);
+            byte[] signature = signing.signature_create(privatekey, NumericUtil.hexToBytes(bytes), null, "cardano", false);
             dict witness = new dict();
             witness.put("publickey", publickey);
             witness.put("chaincode", binint.b2h(new byte[32]));
@@ -118,11 +115,20 @@ public class CardanoStateProvider implements ChainState, UTXOState {
 
     @Override
     public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee) {
-        return encodeTransaction(utxos, recipients, changeAddress, fee, DECIMALS);
+        return null;
+    }
+
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals) {
+        return null;
     }
 
     @Override
-    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals) {
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, long bestSlot) {
+        return encodeTransaction(utxos, recipients, changeAddress, fee, DECIMALS, bestSlot);
+    }
+
+    @Override
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals, long bestSlot) {
         // Inputs
         dict[] inputs = new dict[utxos.size()];
         JSONArray addresses = new JSONArray();
@@ -165,6 +171,8 @@ public class CardanoStateProvider implements ChainState, UTXOState {
         dict fields = new dict();
         fields.put("inputs", inputs);
         fields.put("outputs", outputs.toArray(new dict[0]));
+        fields.put("fee", fee.multiply(decimals).toBigInteger());
+        fields.put("bestSlot", BigInteger.valueOf(bestSlot));
         byte[] txn = transaction.transaction_encode(fields, "cardano", false);
         JSONObject packedTx = new JSONObject();
         packedTx.put("addresses", addresses);

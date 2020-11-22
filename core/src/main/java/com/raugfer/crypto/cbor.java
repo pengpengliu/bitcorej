@@ -220,9 +220,9 @@ public class cbor {
         }
         if (o instanceof List) {
             List l = (List)o;
-            byte[] b = enc(CBOR_ARRAY|CBOR_VAR_FOLLOWS);
+            byte[] b = enc(CBOR_ARRAY|l.size());
             for (Object x : l) b = bytes.concat(b, dumps(x));
-            return bytes.concat(b, enc(CBOR_BREAK));
+            return b; //bytes.concat(b, enc(CBOR_BREAK));
         }
         if (o instanceof Map) {
             Map m = (Map)o;

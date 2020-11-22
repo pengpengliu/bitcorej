@@ -125,7 +125,7 @@ public class signing {
             default: throw new IllegalStateException("Unknown hash function");
         }
         byte[] envelop_prefix = coins.attr("signature.hashing.envelop.prefix", new byte[]{ }, coin, testnet);
-        b = bytes.concat(envelop_prefix, b);
+//        b = bytes.concat(envelop_prefix, b);
         BigInteger h = binint.b2n(b);
         int h_len = b.length;
         Object[] S;

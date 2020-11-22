@@ -70,7 +70,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRState {
+public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRState, ADATxBuilderState {
     private static HashMap<String, ChainState> services;
 
     static
@@ -362,6 +362,22 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
     public String generateViewKey(String secret) {
         if (this.provider instanceof XMRState) {
             return ((XMRState) this.provider).generateViewKey(secret);
+        }
+        return null;
+    }
+
+    @Override
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, long bestSlot) {
+        if (this.provider instanceof UTXOState) {
+            return ((ADATxBuilderState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee, bestSlot);
+        }
+        return null;
+    }
+
+    @Override
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals, long bestSlot) {
+        if (this.provider instanceof UTXOState) {
+            return ((ADATxBuilderState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee, bestSlot);
         }
         return null;
     }
