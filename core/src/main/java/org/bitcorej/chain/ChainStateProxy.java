@@ -64,6 +64,7 @@ import org.bitcorej.chain.xns.XNSStateProvider;
 import org.bitcorej.chain.xtz.XTZStateProvider;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.chain.zcl.ZCLStateProvider;
+import org.bitcorej.chain.zen.ZENStateProvider;
 import org.bitcorej.core.Network;
 
 import java.math.BigDecimal;
@@ -220,6 +221,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         VRSCStateProvider vrsc = new VRSCStateProvider(Network.MAIN);
         services.put("VRSC", vrsc);
         services.put("VRSC_MAIN", vrsc);
+        ZENStateProvider zen = new ZENStateProvider(Network.MAIN);
+        services.put("ZEN", zen);
+        services.put("ZEN_MAIN", zen);
     }
 
     private ChainState provider;
