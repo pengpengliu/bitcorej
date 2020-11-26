@@ -74,7 +74,7 @@ public class ZENStateProvider extends BitcoinStateProvider {
         return null;
     }
 
-    public byte[] serializeTx(Transaction tx) {
+    public byte[] serializeTx(Transaction tx, int index) {
         try {
             UnsafeByteArrayOutputStream stream = new UnsafeByteArrayOutputStream();
             // Version
@@ -83,9 +83,13 @@ public class ZENStateProvider extends BitcoinStateProvider {
             for (int i = 0; i < tx.getInputs().size(); i++) {
                 TransactionInput input = tx.getInput(i);
                 input.getOutpoint().bitcoinSerialize(stream);
-                byte[] script = input.getScriptBytes();
-                stream.write(script.length);
-                stream.write(script);
+                if (index >= 0 && index != i) {
+                    stream.write(0);
+                } else {
+                    byte[] script = input.getScriptBytes();
+                    stream.write(script.length);
+                    stream.write(script);
+                }
                 Utils.uint32ToByteStreamLE(input.getSequenceNumber(), stream);
             }
             stream.write(tx.getOutputs().size());
@@ -112,13 +116,13 @@ public class ZENStateProvider extends BitcoinStateProvider {
         JSONObject rawTxJSON = new JSONObject(rawTx);
         Transaction tx = buildTransaction(rawTx);
 
-        byte[] rawTxBytes = serializeTx(tx);
         for (int i = 0; i < tx.getInputs().size(); i++) {
             TransactionInput input = tx.getInput(i);
             Script scriptPubKey = new Script(input.getScriptBytes());
 
             ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(this.selectPrivateKeys(scriptPubKey, keys)));
 
+            byte[] rawTxBytes = serializeTx(tx, i);
             byte[] toSign = ByteUtil.concat(rawTxBytes, new byte[]{ 0x01, 0x00, 0x00, 0x00 });
             ECKey.ECDSASignature signature = ecKey.sign(Sha256Hash.twiceOf(toSign));
             byte[] sig = ByteUtil.concat(signature.encodeToDER(), new byte[]{ 0x01 });
@@ -130,7 +134,7 @@ public class ZENStateProvider extends BitcoinStateProvider {
         String txid = tx.getHashAsString();
         JSONObject packedTx = new JSONObject();
         packedTx.put("txid", txid);
-        packedTx.put("raw", NumericUtil.bytesToHex(serializeTx(tx)));
+        packedTx.put("raw", NumericUtil.bytesToHex(serializeTx(tx, -1)));
 
         if (rawTxJSON.has("destinations")) {
             packedTx.put("destinations", rawTxJSON.getJSONArray("destinations"));
