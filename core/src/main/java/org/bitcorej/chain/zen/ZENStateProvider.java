@@ -5,14 +5,18 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.script.ScriptBuilder;
 import org.bitcorej.chain.KeyPair;
 import org.bitcorej.chain.bitcoin.BitcoinStateProvider;
+import org.bitcorej.chain.bitcoin.Recipient;
+import org.bitcorej.chain.bitcoin.UnspentOutput;
 import org.bitcorej.chain.zcash.ZcashStateProvider;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.BitUtils;
 import org.bitcorej.utils.ByteUtil;
 import org.bitcorej.utils.NumericUtil;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -64,14 +68,115 @@ public class ZENStateProvider extends BitcoinStateProvider {
         return NumericUtil.bytesToHex(script.getProgram());
     }
 
+    public String generateP2PKHScript(Recipient recipient) {
+        byte[] versionAndDataBytes = Base58.decodeChecked(recipient.getAddress());
+        byte[] bytes = new byte[versionAndDataBytes.length - 2];
+        System.arraycopy(versionAndDataBytes, 2, bytes, 0, versionAndDataBytes.length - 2);
+        byte[] blockHash = recipient.getBip115BlockHash(); // NumericUtil.hexToBytes("00000001cf4e27ce1dd8028408ed0a48edd445ba388170c9468ba0d42fff3052");
+        long blockHeight = recipient.getBip115BlockHeight(); // 142091;
+        Script script = new ScriptBuilder()
+                .op(OP_DUP)
+                .op(OP_HASH160)
+                .data(bytes)
+                .op(OP_EQUALVERIFY)
+                .op(OP_CHECKSIG)
+                .data(blockHash)
+                .number(blockHeight)
+                .op(0xb4)  // OP_CHECKBLOCKATHEIGHT
+                .build();
+        return NumericUtil.bytesToHex(script.getProgram());
+    }
+
+    public String generateP2PKHScript(UnspentOutput utxo) {
+        byte[] versionAndDataBytes = Base58.decodeChecked(utxo.getAddress());
+        byte[] bytes = new byte[versionAndDataBytes.length - 2];
+        System.arraycopy(versionAndDataBytes, 2, bytes, 0, versionAndDataBytes.length - 2);
+        byte[] blockHash = utxo.getBip115BlockHash(); // NumericUtil.hexToBytes("00000001cf4e27ce1dd8028408ed0a48edd445ba388170c9468ba0d42fff3052");
+        long blockHeight = utxo.getBip115BlockHeight(); // 142091;
+        Script script = new ScriptBuilder()
+                .op(OP_DUP)
+                .op(OP_HASH160)
+                .data(bytes)
+                .op(OP_EQUALVERIFY)
+                .op(OP_CHECKSIG)
+                .data(blockHash)
+                .number(blockHeight)
+                .op(0xb4)  // OP_CHECKBLOCKATHEIGHT
+                .build();
+        return NumericUtil.bytesToHex(script.getProgram());
+    }
+
     @Override
     protected String selectPrivateKeys(Script script, List<String> keys) {
         for (int i = 0; i < keys.size(); i++) {
-            if (NumericUtil.bytesToHex(script.getProgram()).equals(generateP2PKHScript(this.generateKeyPair(keys.get(i)).getPublic()))) {
+            String lhs = NumericUtil.bytesToHex(script.getProgram()).substring(0, 46);
+            String rhs = generateP2PKHScript(this.generateKeyPair(keys.get(i)).getPublic()).substring(0, 46);
+            if (lhs.equals(rhs)) {
                 return keys.get(i);
             }
         }
         return null;
+    }
+
+    @Override
+    public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals) {
+        JSONObject encodedTx = new JSONObject();
+
+        BigDecimal totalInputAmount = new BigDecimal(0);
+        JSONArray encodedInputs = new JSONArray();
+        for (int i = 0; i < utxos.size(); i++) {
+            UnspentOutput utxo = utxos.get(i);
+            JSONObject encodedInput = new JSONObject();
+            encodedInput.put("txid", utxo.getTxId());
+            encodedInput.put("vout", utxo.getVout());
+            JSONObject output = new JSONObject();
+            String scriptPubKey = generateP2PKHScript(utxo);
+            output.put("script", scriptPubKey);
+            BigDecimal amount = utxo.getAmount();
+            output.put("amount", amount.toString());
+            totalInputAmount = totalInputAmount.add(amount);
+            encodedInput.put("output", output);
+            encodedInputs.put(encodedInput);
+        }
+
+        BigDecimal totalOutputAmount = new BigDecimal(0);
+        JSONArray encodedOutputs = new JSONArray();
+        JSONArray destinations = new JSONArray();
+        for (int i = 0; i < recipients.size(); i++) {
+            Recipient recipient = recipients.get(i);
+            JSONObject encodedOutput = new JSONObject();
+            BigDecimal amount = recipient.getAmount();
+            encodedOutput.put("amount", amount.toString());
+            totalOutputAmount = totalOutputAmount.add(amount);
+
+            String script = recipient.getBip115BlockHash() != null ? generateP2PKHScript(recipient) : generateP2PKHScript(recipient.getAddress());
+            encodedOutput.put("script", script);
+            encodedOutputs.put(encodedOutput);
+            destinations.put(recipient.toString());
+        }
+
+        if (totalInputAmount.compareTo(totalOutputAmount) < 1) {
+            throw new RuntimeException("INSUFFICIENT FUNDS");
+        }
+
+        BigDecimal changeAmount = totalInputAmount.subtract(totalOutputAmount.add(fee));
+        if (changeAmount.compareTo(DUST_THRESHOLD.divide(decimals)) > -1) {
+            JSONObject encodedOutput = new JSONObject();
+            encodedOutput.put("amount", changeAmount.toString());
+            String script = generateP2PKHScript(changeAddress);
+            // String script = NumericUtil.bytesToHex(ScriptBuilder.createOutputScript(Address.fromBase58(Address.getParametersFromAddress(changeAddress), changeAddress)).getProgram());
+            encodedOutput.put("script", script);
+            encodedOutputs.put(encodedOutput);
+            destinations.put(changeAddress + " " + changeAmount);
+        }
+        encodedTx.put("version", 1);
+        encodedTx.put("inputs", encodedInputs);
+        encodedTx.put("outputs", encodedOutputs);
+
+        encodedTx.put("destinations", destinations);
+
+        encodedTx.put("nLockTime", 0);
+        return encodedTx.toString();
     }
 
     public byte[] serializeTx(Transaction tx, int index) {
