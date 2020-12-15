@@ -59,6 +59,7 @@ import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
 import org.bitcorej.chain.vrsc.VRSCStateProvider;
 import org.bitcorej.chain.vsys.VSYSStateProvider;
+import org.bitcorej.chain.west.WESTStateProvider;
 import org.bitcorej.chain.xmr.XMRStateProvider;
 import org.bitcorej.chain.xns.XNSStateProvider;
 import org.bitcorej.chain.xtz.XTZStateProvider;
@@ -224,6 +225,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         ZENStateProvider zen = new ZENStateProvider(Network.MAIN);
         services.put("ZEN", zen);
         services.put("ZEN_MAIN", zen);
+        WESTStateProvider west = new WESTStateProvider();
+        services.put("WEST", west);
+        services.put("WEST_MAIN", west);
     }
 
     private ChainState provider;
