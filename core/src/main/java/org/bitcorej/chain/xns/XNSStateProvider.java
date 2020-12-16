@@ -147,14 +147,10 @@ public class XNSStateProvider implements ChainState {
             String hash64 = Base64.getEncoder().encodeToString(encodedhash);
             String signature64 = Base64.getEncoder().encodeToString(signature);
 
-            System.out.println("plaintext: " + plaintext);
-            System.out.println("hash64: " + hash64);
-            System.out.println("signature64: " + signature64);
-
             JSONObject json = new JSONObject();
             json.put("payload", plaintext);
-            json.put("hash", Base64.getEncoder().encodeToString(encodedhash));
-            json.put("signature", Base64.getEncoder().encodeToString(signature));
+            json.put("hash", hash64);
+            json.put("signature", signature64);
             return json.toString();
         } catch (Exception e) {
             e.printStackTrace();
