@@ -28,6 +28,7 @@ public class BCHStateProvider extends BitcoinStateProvider {
     @Override
     public String signRawTransaction(String rawTx, List<String> keys) {
         Transaction tx = super.buildTransaction(rawTx);
+        tx.setVersion(2);
 
         JSONObject decodedTx = new JSONObject(rawTx);
 
