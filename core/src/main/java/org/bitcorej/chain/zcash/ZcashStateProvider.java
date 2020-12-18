@@ -45,7 +45,8 @@ public class ZcashStateProvider extends BitcoinStateProvider {
 
         super.network = network;
         // consensusBranchId = 1991772603l; // 0x76b809bb (old Sapling branch id). Blossom branch id becomes effective after block 653600
-        consensusBranchId = 0xf5b9230b;
+        // consensusBranchId = 0xf5b9230b;
+        consensusBranchId = 0xe9ff75a6;
     }
 
     public String generateP2PKHScript(String address) {
