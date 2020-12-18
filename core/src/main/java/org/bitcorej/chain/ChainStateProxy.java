@@ -2,6 +2,7 @@ package org.bitcorej.chain;
 
 import org.bitcorej.chain.ada.CardanoStateProvider;
 import org.bitcorej.chain.adk.ADKStateProvider;
+import org.bitcorej.chain.akt.AKTStateProvider;
 import org.bitcorej.chain.ask.ASKStateProvider;
 import org.bitcorej.chain.bch.BCHStateProvider;
 import org.bitcorej.chain.bhd.BHDStateProvider;
@@ -228,6 +229,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         WESTStateProvider west = new WESTStateProvider();
         services.put("WEST", west);
         services.put("WEST_MAIN", west);
+        AKTStateProvider akt = new AKTStateProvider();
+        services.put("AKT", akt);
+        services.put("AKT_MAIN", akt);
     }
 
     private ChainState provider;
