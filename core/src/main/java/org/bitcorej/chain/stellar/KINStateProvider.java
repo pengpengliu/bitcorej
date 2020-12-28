@@ -1,5 +1,6 @@
 package org.bitcorej.chain.stellar;
 
+import org.bitcorej.chain.sol.SOLStateProvider;
 import org.bitcorej.core.Network;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
@@ -11,6 +12,12 @@ import java.util.List;
 public class KINStateProvider extends StellarStateProvider {
     public KINStateProvider(Network network) {
         super(network);
+    }
+
+    public static org.bitcorej.chain.KeyPair toSol(String secret) {
+        char[] charSeed = secret.toCharArray();
+        byte[] decoded = StrKey.decodeStellarSecretSeed(charSeed);
+        return new SOLStateProvider().generateKeyPair(NumericUtil.bytesToHex(decoded));
     }
 
     @Override

@@ -9,18 +9,19 @@ import org.bitcorej.chain.Transaction;
 import org.bitcorej.utils.NumericUtil;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.List;
 
 public class SOLStateProvider implements ChainState {
     @Override
     public KeyPair generateKeyPair(String secret) {
         Ed25519 keyPair = new Ed25519(NumericUtil.hexToBytes(secret));
-        return new KeyPair(keyPair.B58SecKey(), keyPair.B58PubKey());
+        return new KeyPair(NumericUtil.bytesToHex(keyPair.seckey()), keyPair.B58PubKey());
     }
 
     @Override
     public KeyPair generateKeyPair() {
-        return this.generateKeyPair(new Ed25519().B58SecKey());
+        return this.generateKeyPair(NumericUtil.bytesToHex(new Ed25519().seckey()));
     }
 
     @Override
