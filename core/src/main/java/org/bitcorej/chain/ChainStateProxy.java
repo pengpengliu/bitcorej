@@ -29,6 +29,7 @@ import org.bitcorej.chain.eos.YTAStateProvider;
 import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.fil.FILStateProvider;
+import org.bitcorej.chain.gleec.GLEECStateProvider;
 import org.bitcorej.chain.grs.GRSStateProvider;
 import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
@@ -53,6 +54,7 @@ import org.bitcorej.chain.ripple.RippleStateProvider;
 import org.bitcorej.chain.rvc.RVCStateProvider;
 import org.bitcorej.chain.rvn.RVNStateProvider;
 import org.bitcorej.chain.sol.SOLStateProvider;
+import org.bitcorej.chain.sprk.SPRKStateProvider;
 import org.bitcorej.chain.stellar.KINStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
 import org.bitcorej.chain.stg.STGStateProvider;
@@ -236,6 +238,12 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         POCStateProvider poc = new POCStateProvider();
         services.put("POC", poc);
         services.put("POC_MAIN", poc);
+        GLEECStateProvider gleec = new GLEECStateProvider(Network.MAIN);
+        services.put("GLEEC", gleec);
+        services.put("GLEEC_MAIN", gleec);
+        SPRKStateProvider sprk = new SPRKStateProvider(Network.MAIN);
+        services.put("SPRK", sprk);
+        services.put("SPRK_MAIN", sprk);
     }
 
     private ChainState provider;
