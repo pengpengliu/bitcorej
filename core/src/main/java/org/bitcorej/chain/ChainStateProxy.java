@@ -59,6 +59,7 @@ import org.bitcorej.chain.stellar.KINStateProvider;
 import org.bitcorej.chain.stellar.StellarStateProvider;
 import org.bitcorej.chain.stg.STGStateProvider;
 import org.bitcorej.chain.trx.TRXStateProvider;
+import org.bitcorej.chain.umi.UMIStateProvider;
 import org.bitcorej.chain.usdt.USDTStateProvider;
 import org.bitcorej.chain.vet.VETStateProvider;
 import org.bitcorej.chain.vrsc.VRSCStateProvider;
@@ -244,6 +245,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         SPRKStateProvider sprk = new SPRKStateProvider(Network.MAIN);
         services.put("SPRK", sprk);
         services.put("SPRK_MAIN", sprk);
+        UMIStateProvider umi = new UMIStateProvider();
+        services.put("UMI", umi);
+        services.put("UMI_MAIN", umi);
     }
 
     private ChainState provider;
