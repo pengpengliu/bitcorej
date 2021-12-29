@@ -242,6 +242,9 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         GLEECStateProvider gleec = new GLEECStateProvider(Network.MAIN);
         services.put("GLEEC", gleec);
         services.put("GLEEC_MAIN", gleec);
+        GLEECStateProvider gleec2 = new GLEECStateProvider(Network.MAIN);
+        services.put("GLEEC2", gleec2);
+        services.put("GLEEC2_MAIN", gleec2);
         SPRKStateProvider sprk = new SPRKStateProvider(Network.MAIN);
         services.put("SPRK", sprk);
         services.put("SPRK_MAIN", sprk);
