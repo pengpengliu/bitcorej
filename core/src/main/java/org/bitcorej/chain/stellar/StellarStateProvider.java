@@ -84,6 +84,8 @@ public class StellarStateProvider implements ChainState {
                 asset = new AssetTypeCreditAlphaNum4("MBX", org.stellar.sdk.KeyPair.fromAccountId("GD5ASA7ODHQ2PNI7EXJF2XPEWQDLYNJ4KGIVPE4E5CSQZJ4O7EMJNPPL"));
             } else if (jsonObject.getString("asset").equals("NWC")) {
                 asset = new AssetTypeCreditAlphaNum4("NWC", org.stellar.sdk.KeyPair.fromAccountId("GAAPUOQWOZAG3PENRN7FEPYWXVGJBJVBL6EUE2ZHN5TSY7WBXQDO7AY2"));
+            } else if (jsonObject.getString("asset").equals("LSP")) {
+                asset = new AssetTypeCreditAlphaNum4("LSP", org.stellar.sdk.KeyPair.fromAccountId("GAB7STHVD5BDH3EEYXPI3OM7PCS4V443PYB5FNT6CFGJVPDLMKDM24WK"));
             } else {
                 throw new RuntimeException("no sup asset:" + jsonObject.getString("asset"));
             }
