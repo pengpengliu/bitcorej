@@ -30,6 +30,7 @@ import org.bitcorej.chain.erc20.ERC20StateProvider;
 import org.bitcorej.chain.ethereum.EthereumStateProvider;
 import org.bitcorej.chain.fil.FILStateProvider;
 import org.bitcorej.chain.gleec.GLEECStateProvider;
+import org.bitcorej.chain.gleec2.GLEEC2StateProvider;
 import org.bitcorej.chain.grs.GRSStateProvider;
 import org.bitcorej.chain.gxc.GXCStateProvider;
 import org.bitcorej.chain.iost.IOSTStateProvider;
@@ -111,7 +112,7 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         services.put("ZEC_TEST", new ZcashStateProvider(Network.TEST));
         ZCLStateProvider zcl = new ZCLStateProvider(Network.MAIN);
         services.put("ZCL", zcl);
-        services.put("ZCL_MAIn", zcl);
+        services.put("ZCL_MAIN", zcl);
         services.put("DOGE_MAIN", new DogecoinStateProvider(Network.MAIN));
         services.put("DOGE_TEST", new DogecoinStateProvider(Network.TEST));
         services.put("QTUM_MAIN", new QTUMStateProvider(Network.MAIN));
@@ -242,7 +243,7 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
         GLEECStateProvider gleec = new GLEECStateProvider(Network.MAIN);
         services.put("GLEEC", gleec);
         services.put("GLEEC_MAIN", gleec);
-        GLEECStateProvider gleec2 = new GLEECStateProvider(Network.MAIN);
+        GLEEC2StateProvider gleec2 = new GLEEC2StateProvider(Network.MAIN);
         services.put("GLEEC2", gleec2);
         services.put("GLEEC2_MAIN", gleec2);
         SPRKStateProvider sprk = new SPRKStateProvider(Network.MAIN);
@@ -271,10 +272,8 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
     }
 
     public ChainStateProxy(String chain, String...args) throws Exception {
-        if (chain.toUpperCase().equals("ETH") && args.length == 2) {
-            this.provider = services.get("ERC20");
-            ((ERC20StateProvider)this.provider).setAddress(args[0]);
-            ((ERC20StateProvider)this.provider).setDecimals(Integer.parseInt(args[1]));
+        if ((chain.toUpperCase().equals("ETH") || chain.toUpperCase().equals("ERC20")) && args.length == 2) {
+            this.provider = new ERC20StateProvider(args[0], Integer.parseInt(args[1]));
         } else {
             this.provider = services.get(chain.toUpperCase());
         }
@@ -301,7 +300,7 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
 
     @Override
     public Transaction decodeRawTransaction(String rawTx) {
-        return null;
+        return provider.decodeRawTransaction(rawTx);
     }
 
     @Override
@@ -399,7 +398,7 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
 
     @Override
     public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, long bestSlot) {
-        if (this.provider instanceof UTXOState) {
+        if (this.provider instanceof ADATxBuilderState) {
             return ((ADATxBuilderState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee, bestSlot);
         }
         return null;
@@ -407,8 +406,8 @@ public class ChainStateProxy implements ChainState, UTXOState, USDTState, XMRSta
 
     @Override
     public String encodeTransaction(List<UnspentOutput> utxos, List<Recipient> recipients, String changeAddress, BigDecimal fee, BigDecimal decimals, long bestSlot) {
-        if (this.provider instanceof UTXOState) {
-            return ((ADATxBuilderState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee, bestSlot);
+        if (this.provider instanceof ADATxBuilderState) {
+            return ((ADATxBuilderState) this.provider).encodeTransaction(utxos, recipients, changeAddress, fee, decimals, bestSlot);
         }
         return null;
     }

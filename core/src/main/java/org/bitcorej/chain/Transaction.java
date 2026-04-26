@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Transaction {
 
@@ -94,26 +95,34 @@ public class Transaction {
         if (!(obj instanceof Transaction)) return false;
 
         Transaction tx = (Transaction)obj;
-        for (int i = 0; i < tx.getFrom().size(); i++) {
-            if (!tx.getFrom().get(i).address.equals(this.getFrom().get(i).address)) {
-                return false;
-            }
-            if (tx.getFrom().get(i).amount != null) {
-                if (tx.getFrom().get(i).amount.compareTo(this.getFrom().get(i).amount) != 0) {
+        if (!hasSameSize(tx.getFrom(), this.getFrom()) || !hasSameSize(tx.getTo(), this.getTo())) {
+            return false;
+        }
+
+        if (tx.getFrom() != null) {
+            for (int i = 0; i < tx.getFrom().size(); i++) {
+                if (!Objects.equals(tx.getFrom().get(i).address, this.getFrom().get(i).address)) {
                     return false;
+                }
+                if (tx.getFrom().get(i).amount != null) {
+                    if (tx.getFrom().get(i).amount.compareTo(this.getFrom().get(i).amount) != 0) {
+                        return false;
+                    }
                 }
             }
         }
 
-        for (int i = 0; i < tx.getTo().size(); i++) {
-            if (!tx.getTo().get(i).address.equals(this.getTo().get(i).address)) {
-                return false;
-            }
-            if (tx.getTo().get(i).amount.compareTo(this.getTo().get(i).amount) != 0) {
-                return false;
-            }
-            if (!tx.getTo().get(i).memo.equals(this.getTo().get(i).memo)) {
-                return false;
+        if (tx.getTo() != null) {
+            for (int i = 0; i < tx.getTo().size(); i++) {
+                if (!Objects.equals(tx.getTo().get(i).address, this.getTo().get(i).address)) {
+                    return false;
+                }
+                if (tx.getTo().get(i).amount.compareTo(this.getTo().get(i).amount) != 0) {
+                    return false;
+                }
+                if (!Objects.equals(tx.getTo().get(i).memo, this.getTo().get(i).memo)) {
+                    return false;
+                }
             }
         }
 
@@ -122,5 +131,12 @@ public class Transaction {
         } else {
             return true;
         }
+    }
+
+    private static boolean hasSameSize(List<?> expected, List<?> actual) {
+        if (expected == null || actual == null) {
+            return expected == actual;
+        }
+        return expected.size() == actual.size();
     }
 }

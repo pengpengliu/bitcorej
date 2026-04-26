@@ -1,6 +1,6 @@
 package org.bitcorej.chain.xtz;
 
-import com.goterl.lazycode.lazysodium.SodiumJava;
+import com.goterl.lazysodium.SodiumJava;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bitcoinj.core.Base58;
 import org.bitcoinj.core.Sha256Hash;

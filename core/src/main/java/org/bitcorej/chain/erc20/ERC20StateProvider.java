@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ERC20StateProvider extends EthereumStateProvider {
+    private static final BigDecimal ETH_DECIMALS = new BigDecimal(10).pow(18);
+
     private String address;
     private int decimals;
 
@@ -42,7 +44,7 @@ public class ERC20StateProvider extends EthereumStateProvider {
             throw new RuntimeException("Invalid value");
         }
 
-        if (!jsonObject.getString("to").equals(this.address)) {
+        if (!jsonObject.getString("to").equalsIgnoreCase(this.address)) {
             throw new RuntimeException("Invalid contract address");
         }
 
@@ -71,7 +73,7 @@ public class ERC20StateProvider extends EthereumStateProvider {
 
         BigInteger fee = gasPrice.multiply(gasLimit);
 
-        tx.setFee(new BigDecimal(fee).divide(new BigDecimal(10).pow(this.decimals)));
+        tx.setFee(new BigDecimal(fee).divide(ETH_DECIMALS));
         return tx;
     }
 
@@ -80,12 +82,12 @@ public class ERC20StateProvider extends EthereumStateProvider {
         jsonObject.put("from", from);
         jsonObject.put("to", address);
         jsonObject.put("gas", "0x" + Integer.toHexString(gas));
-        jsonObject.put("gasPrice", "0x" + NumericUtil.bytesToHex(gasPrice.multiply(new BigDecimal(10).pow(this.decimals)).toBigInteger().toByteArray()));
+        jsonObject.put("gasPrice", "0x" + gasPrice.multiply(ETH_DECIMALS).toBigInteger().toString(16));
         jsonObject.put("value", "0x0");
         jsonObject.put("nonce", "0x" + Integer.toHexString(nonce));
-        String amountHex = NumericUtil.bytesToHex(amount.multiply(new BigDecimal(10).pow(this.decimals)).toBigInteger().toByteArray());
-        String amountPrefix = "00000000000000000000000000000000000000000000000000000000";
-        jsonObject.put("data", "0xa9059cbb000000000000000000000000" + NumericUtil.cleanHexPrefix(to) + amountPrefix.substring(amountPrefix.length() - amountHex.length()) + amountHex);
+        BigInteger tokenAmount = amount.multiply(new BigDecimal(10).pow(this.decimals)).toBigInteger();
+        String amountHex = NumericUtil.bigIntegerToHexWithZeroPadded(tokenAmount, 64);
+        jsonObject.put("data", "0xa9059cbb000000000000000000000000" + NumericUtil.cleanHexPrefix(to) + amountHex);
         return jsonObject.toString();
     }
 

@@ -45,7 +45,6 @@ public class BinanceStateProvider extends CosmosStateProvider {
         String toAmount = jsonObject.getJSONObject("msg").getJSONArray("coins").getJSONObject(0).getString("amount");
 
         String signMsg = "{\"account_number\":\"" + accountNumber + "\",\"chain_id\":\"" + chainId + "\",\"data\":null,\"memo\":\"" + memo + "\",\"msgs\":[{\"inputs\":[{\"address\":\"" + from + "\",\"coins\":[{\"amount\":" + toAmount + ",\"denom\":\"" + toDenom + "\"}]}],\"outputs\":[{\"address\":\"" + to + "\",\"coins\":[{\"amount\":" + toAmount + ",\"denom\":\"" + toDenom + "\"}]}]}],\"sequence\":\"" + sequence + "\",\"source\":\"0\"}";
-        System.out.println(signMsg);
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-256");
@@ -59,7 +58,6 @@ public class BinanceStateProvider extends CosmosStateProvider {
 
         ECKey ecKey = ECKey.fromPrivate(NumericUtil.hexToBytes(keys.get(0)));
         ECKey.ECDSASignature sig = ecKey.sign(Sha256Hash.wrap(sha256hex));
-        System.out.println(NumericUtil.bytesToHex(ecKey.getPrivKeyBytes()));
         byte[] signature = ByteUtil.trimLeadingZeroes(ByteUtil.concat(sig.r.toByteArray(), sig.s.toByteArray()));
 
         return "{\"msg\":[{\"inputs\":[{\"address\":\"" + from + "\",\"coins\":[{\"denom\":\"" + toDenom + "\",\"amount\":" + toAmount + "}]}],\"outputs\":[{\"address\":\"" + to + "\",\"coins\":[{\"denom\":\"" + toDenom + "\",\"amount\":" + toAmount + "}]}],\"msgType\":\"MsgSend\"}],\"signatures\":[{\"pub_key\":\"" + ecKey.getPublicKeyAsHex() + "\",\"signature\":\"" + NumericUtil.bytesToHex(signature) + "\",\"account_number\":" + accountNumber + ",\"sequence\":" + sequence + "}],\"memo\":\"" + memo + "\",\"source\":0,\"data\":\"\",\"msgType\":\"StdTx\"}";
